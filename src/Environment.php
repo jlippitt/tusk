@@ -2,8 +2,10 @@
 
 namespace Tusk;
 
-class Stack
+class Environment
 {
+    private $context;
+
     public static function getInstance()
     {
         static $instance;
@@ -15,13 +17,13 @@ class Stack
         return $instance;
     }
 
-    public function push($text)
+    public function setContext(ContextInterface $context)
     {
-        // Nothing yet
+        $this->context = $context;
     }
 
-    public function pop()
+    public function getContext()
     {
-        // Nothing yet
+        return $this->context;
     }
 }

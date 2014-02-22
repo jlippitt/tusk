@@ -6,16 +6,20 @@ class Expectation
 {
     private $value;
 
-    public function __construct($value)
+    private $context;
+
+    public function __construct($value, ContextInterface $context)
     {
         $this->value = $value;
+        $this->context = $context;
     }
 
     public function toBe($expected)
     {
         if ($this->value !== $expected) {
             throw new ExpectationException(
-                "Expected '{$expected}' but got '{$this->value}'"
+                "Expected '{$expected}' but got '{$this->value}'",
+                $this->context
             );
         }
     }

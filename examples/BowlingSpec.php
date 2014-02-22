@@ -16,7 +16,7 @@ class Bowling
 }
 
 describe('Bowling', function() {
-    describe('getScore', function() {
+    describe('getScore()', function() {
         it('returns 0 for all gutter game', function() {
             $bowling = new Bowling();
 
@@ -25,6 +25,14 @@ describe('Bowling', function() {
             }
 
             expect($bowling->getScore())->toBe(0);
+        });
+
+        it('returns 10 for a strike', function() {
+            $bowling = new Bowling();
+
+            $bowling->hit(10);
+
+            expect($bowling->getScore())->toBe(10);
         });
     });
 });
