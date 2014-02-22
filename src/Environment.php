@@ -24,7 +24,7 @@ class Environment
         $this->expectationFactory = $expectationFactory;
     }
 
-    public function setContext(AbstractContext $context)
+    public function setContext(AbstractContext $context = null)
     {
         $this->context = $context;
     }
