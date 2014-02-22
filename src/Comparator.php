@@ -16,7 +16,7 @@ class Comparator
 
     public function __invoke(array $args)
     {
-        return $this->body->__invoke($args);
+        return call_user_func_array($this->body, $args);
     }
 
     public function formatMessage(array $args, $inverted = false)
