@@ -28,7 +28,10 @@ function expect($value)
 {
     $env = Environment::getInstance();
 
-    return new Expectation($value, $env->getContext());
+    return $env->getExpectationFactory()->createExpectation(
+        $value,
+        $env->getContext()
+    );
 }
 
 function beforeEach(\Closure $body)
