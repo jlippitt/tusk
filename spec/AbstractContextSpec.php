@@ -16,7 +16,7 @@ describe('AbstractContext', function() {
 
         $this->context = m::mock(
             'Tusk\AbstractContext[executeBody]',
-            array('getTrunk', $this->env)
+            array('getTrunk()', $this->env)
         );
 
         $this->context->shouldAllowMockingProtectedMethods();
@@ -26,7 +26,7 @@ describe('AbstractContext', function() {
         m::close();
     });
 
-    describe('execute', function() {
+    describe('execute()', function() {
         it('should call executeBody after setting context and return context to its prior state', function() {
             $this->env
                 ->shouldReceive('setContext')
@@ -52,9 +52,9 @@ describe('AbstractContext', function() {
         });
     });
 
-    describe('getDescription', function() {
+    describe('getDescription()', function() {
         it('should return the passed description if no parent is set', function() {
-            expect($this->context->getDescription())->toBe('getTrunk');
+            expect($this->context->getDescription())->toBe('getTrunk()');
         });
 
         it('should append to parent description if parent is set', function() {
@@ -64,7 +64,7 @@ describe('AbstractContext', function() {
             ;
 
             $executeBody = function () {
-                expect($this->context->getDescription())->toBe('Elephant getTrunk');
+                expect($this->context->getDescription())->toBe('Elephant getTrunk()');
             };
 
             $this->context
