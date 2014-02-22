@@ -27,25 +27,25 @@ class Suite extends AbstractContext
         $this->postHooks[] = $body;
     }
 
-    public function executePreHooks()
+    public function executePreHooks(\stdClass $scope)
     {
         if ($this->getParent() !== null) {
-            $this->getParent()->executePreHooks();
+            $this->getParent()->executePreHooks($scope);
         }
 
         foreach ($this->preHooks as $hook) {
-            $hook();
+            $hook->bindTo($scope, $scope)->__invoke();
         }
     }
 
-    public function executePostHooks()
+    public function executePostHooks(\stdClass $scope)
     {
         foreach ($this->postHooks as $hook) {
-            $hook();
+            $hook->bindTo($scope, $scope)->__invoke();
         }
 
         if ($this->getParent() !== null) {
-            $this->getParent()->executePostHooks();
+            $this->getParent()->executePostHooks($scope);
         }
     }
 

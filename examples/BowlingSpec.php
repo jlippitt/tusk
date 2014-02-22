@@ -17,24 +17,22 @@ class Bowling
 
 describe('Bowling', function() {
     describe('getScore()', function() {
-        $bowling = null;
-
-        beforeEach(function() use (&$bowling) {
-            $bowling = new Bowling();
+        beforeEach(function() {
+            $this->bowling = new Bowling();
         });
 
-        it('returns 0 for all gutter game', function() use (&$bowling) {
+        it('returns 0 for all gutter game', function() {
             for ($i = 0; $i < 20; ++$i) {
-                $bowling->hit(0);
+                $this->bowling->hit(0);
             }
 
-            expect($bowling->getScore())->toBe(0);
+            expect($this->bowling->getScore())->toBe(0);
         });
 
-        it('returns 10 for a strike', function() use (&$bowling) {
-            $bowling->hit(10);
+        it('returns 10 for a strike', function() {
+            $this->bowling->hit(10);
 
-            expect($bowling->getScore())->toBe(10);
+            expect($this->bowling->getScore())->toBe(10);
         });
     });
 });

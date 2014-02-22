@@ -15,10 +15,12 @@ class Spec extends AbstractContext
 
     protected function executeBody()
     {
-        $this->getParent()->executePreHooks();
+        $scope = new \stdClass();
 
-        $this->body->__invoke();
+        $this->getParent()->executePreHooks($scope);
 
-        $this->getParent()->executePostHooks();
+        $this->body->bindTo($scope, $scope)->__invoke();
+
+        $this->getParent()->executePostHooks($scope);
     }
 }
