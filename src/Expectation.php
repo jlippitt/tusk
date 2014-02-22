@@ -33,11 +33,9 @@ class Expectation
         if (array_key_exists($method, $this->comparators)) {
             $comparator = $this->comparators[$method];
 
-            array_unshift($args, $this->value);
-
-            if ($comparator($args) === $inverted) {
+            if ($comparator($this->value, $args) === $inverted) {
                 throw new ExpectationException(
-                    $comparator->formatMessage($args, $inverted),
+                    $comparator->formatMessage($this->value, $args, $inverted),
                     $this->context
                 );
             }
