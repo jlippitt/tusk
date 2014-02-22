@@ -8,7 +8,7 @@ class Expectation
 
     private $context;
 
-    public function __construct($value, Context $context)
+    public function __construct($value, AbstractContext $context)
     {
         $this->value = $value;
         $this->context = $context;

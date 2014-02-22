@@ -3,15 +3,16 @@
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
-use Tusk\Context;
 use Tusk\Environment;
 use Tusk\Expectation;
+use Tusk\Spec;
+use Tusk\Suite;
 
 function describe($description, \Closure $body)
 {
     $env = Environment::getInstance();
 
-    $context = new Context($description, $body, $env);
+    $context = new Suite($description, $body, $env);
     $context->execute();
 }
 
@@ -19,7 +20,7 @@ function it($description, \Closure $body)
 {
     $env = Environment::getInstance();
 
-    $context = new Context($description, $body, $env);
+    $context = new Spec($description, $body, $env);
     $context->execute();
 }
 
@@ -28,6 +29,16 @@ function expect($value)
     $env = Environment::getInstance();
 
     return new Expectation($value, $env->getContext());
+}
+
+function beforeEach(\Closure $body)
+{
+    Environment::getInstance()->getContext()->addPreHook($body);
+}
+
+function afterEach(\Closure $body)
+{
+    Environment::getInstance()->getContext()->addPostHook($body);
 }
 
 if ($argc !== 2) {

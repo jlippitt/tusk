@@ -2,20 +2,17 @@
 
 namespace Tusk;
 
-class Context
+abstract class AbstractContext
 {
     private $description;
-
-    private $body;
 
     private $env;
 
     private $parent;
 
-    public function __construct($description, \Closure $body, Environment $env)
+    public function __construct($description, Environment $env)
     {
         $this->description = $description;
-        $this->body = $body;
         $this->env = $env;
     }
 
@@ -36,8 +33,15 @@ class Context
 
         $this->env->setContext($this);
 
-        $this->body->__invoke();
+        $this->executeBody();
 
         $this->env->setContext($this->parent);
+    }
+
+    protected abstract function executeBody();
+
+    protected function getParent()
+    {
+        return $this->parent;
     }
 }
