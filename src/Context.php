@@ -2,16 +2,21 @@
 
 namespace Tusk;
 
-class AbstractContext implements ContextInterface
+class Context
 {
     private $description;
 
+    private $body;
+
+    private $env;
+
     private $parent;
 
-    public function __construct($description, ContextInterface $parent = null)
+    public function __construct($description, \Closure $body, Environment $env)
     {
         $this->description = $description;
-        $this->parent = $parent;
+        $this->body = $body;
+        $this->env = $env;
     }
 
     public function getDescription()
@@ -25,8 +30,14 @@ class AbstractContext implements ContextInterface
         return $description . $this->description;
     }
 
-    public function getParent()
+    public function execute()
     {
-        return $this->parent;
+        $this->parent = $this->env->getContext();
+
+        $this->env->setContext($this);
+
+        $this->body->__invoke();
+
+        $this->env->setContext($this->parent);
     }
 }

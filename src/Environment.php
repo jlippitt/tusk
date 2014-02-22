@@ -17,7 +17,7 @@ class Environment
         return $instance;
     }
 
-    public function setContext(ContextInterface $context)
+    public function setContext(Context $context)
     {
         $this->context = $context;
     }

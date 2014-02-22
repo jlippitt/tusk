@@ -3,35 +3,24 @@
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
+use Tusk\Context;
 use Tusk\Environment;
 use Tusk\Expectation;
-use Tusk\Spec;
-use Tusk\Suite;
 
 function describe($description, \Closure $body)
 {
     $env = Environment::getInstance();
 
-    $suite = new Suite($description, $env->getContext());
-
-    $env->setContext($suite);
-
-    $body();
-
-    $env->setContext($suite->getParent());
+    $context = new Context($description, $body, $env);
+    $context->execute();
 }
 
 function it($description, \Closure $body)
 {
     $env = Environment::getInstance();
 
-    $suite = new Spec($description, $env->getContext());
-
-    $env->setContext($suite);
-
-    $body();
-
-    $env->setContext($suite->getParent());
+    $context = new Context($description, $body, $env);
+    $context->execute();
 }
 
 function expect($value)
