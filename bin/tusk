@@ -1,0 +1,42 @@
+#!/usr/bin/php
+<?php
+
+require_once(__DIR__ . '/../vendor/autoload.php');
+
+use Tusk\Expectation;
+use Tusk\Stack;
+
+function describe($text, \Closure $body)
+{
+    $stack = Stack::getInstance();
+
+    $stack->push($text);
+
+    $body();
+
+    $stack->pop();
+}
+
+function it($text, \Closure $body)
+{
+    $stack = Stack::getInstance();
+
+    $stack->push($text);
+
+    $body();
+
+    $stack->pop();
+}
+
+function expect($value)
+{
+    return new Expectation($value);
+}
+
+if ($argc !== 2) {
+    die("Syntax: tusk <filename>\n");
+}
+
+require($argv[1]);
+
+echo "All specs passed\n";
