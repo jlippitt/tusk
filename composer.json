@@ -1,0 +1,6 @@
+{
+    "name": "jlippitt/tusk",
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
