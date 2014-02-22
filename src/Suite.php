@@ -59,7 +59,7 @@ class Suite extends AbstractContext
     protected function executeBody()
     {
         if ($this->getParent() !== null) {
-            $this->scope = $this->getParent()->getScope();
+            $this->scope = clone $this->getParent()->getScope();
         } else {
             $this->scope = new \stdClass();
         }
