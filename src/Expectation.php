@@ -22,12 +22,29 @@ class Expectation
 
     public function __call($method, array $args)
     {
-        array_unshift($args, $this->value);
+        if (substr($method, 0, 3) === 'not') {
+            $method = lcfirst(substr($method, 3));
+            $inverted = true;
 
-        if (!call_user_func_array($this->comparators[$method], $args)) {
-            throw new ExpectationException(
-                "Expected '{$expected}' but got '{$this->value}'",
-                $this->context
+        } else {
+            $inverted = false;
+        }
+
+        if (array_key_exists($method, $this->comparators)) {
+            $comparator = $this->comparators[$method];
+
+            array_unshift($args, $this->value);
+
+            if ($comparator($args) === $inverted) {
+                throw new ExpectationException(
+                    $comparator->formatMessage($args, $inverted),
+                    $this->context
+                );
+            }
+
+        } else {
+            throw new \BadMethodCallException(
+                "Method '{$method}' does not map to a known comparator"
             );
         }
     }

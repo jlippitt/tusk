@@ -29,6 +29,7 @@ describe('Bowling', function() {
             }
 
             expect($this->bowling->getScore())->toBe(0);
+            expect($this->bowling->getScore())->notToBe(10);
         });
 
         it('returns 10 for a strike', function() {
