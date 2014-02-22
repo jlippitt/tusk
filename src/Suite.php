@@ -10,6 +10,8 @@ class Suite extends AbstractContext
 
     private $postHooks = array();
 
+    private $scope;
+
     public function __construct($description, \Closure $body, Environment $env)
     {
         parent::__construct($description, $env);
@@ -49,8 +51,19 @@ class Suite extends AbstractContext
         }
     }
 
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
     protected function executeBody()
     {
-        $this->body->__invoke();
+        if ($this->getParent() !== null) {
+            $this->scope = $this->getParent()->getScope();
+        } else {
+            $this->scope = new \stdClass();
+        }
+
+        $this->body->bindTo($this->scope, $this->scope)->__invoke();
     }
 }

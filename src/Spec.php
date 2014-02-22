@@ -15,7 +15,7 @@ class Spec extends AbstractContext
 
     protected function executeBody()
     {
-        $scope = new \stdClass();
+        $scope = clone $this->getParent()->getScope();
 
         $this->getParent()->executePreHooks($scope);
 

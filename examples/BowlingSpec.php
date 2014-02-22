@@ -17,6 +17,8 @@ class Bowling
 
 describe('Bowling', function() {
     describe('getScore()', function() {
+        $this->totalPins = 10;
+
         beforeEach(function() {
             $this->bowling = new Bowling();
         });
@@ -30,9 +32,9 @@ describe('Bowling', function() {
         });
 
         it('returns 10 for a strike', function() {
-            $this->bowling->hit(10);
+            $this->bowling->hit($this->totalPins);
 
-            expect($this->bowling->getScore())->toBe(10);
+            expect($this->bowling->getScore())->toBe($this->totalPins);
         });
     });
 });
