@@ -3,204 +3,222 @@
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
-use Tusk\Comparator;
-use Tusk\Environment;
-use Tusk\Expectation;
-use Tusk\Spec;
-use Tusk\Suite;
+$container = new Pimple();
+
+$container['Environment'] = function() {
+    return new Tusk\Environment();
+};
+
+$container['Scoreboard'] = function() {
+    return new Tusk\Scoreboard();
+};
+
+$container['ExpectationFactory'] = function($c) {
+    $expectationFactory = new Tusk\ExpectationFactory($c['Environment']);
+
+    /**
+     * Equality
+     */
+
+    $expectationFactory->addComparator(
+        'toBe',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return $value === $expected;
+            },
+            'to be {0}'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toEqual',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return $value == $expected;
+            },
+            ' to equal {0}'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toBeGreaterThan',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return $value > $expected;
+            },
+            'to be greater than {0}'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toBeGreaterThanOrEqualTo',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return $value >= $expected;
+            },
+            'to be greater than or equal to {0}'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toBeLessThan',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return $value < $expected;
+            },
+            'to be less than {0}'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toBeLessThanOrEqualTo',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return $value <= $expected;
+            },
+            'to be less than or equal to {0}'
+        )
+    );
+
+    /**
+     * Truthiness
+     */
+
+    $expectationFactory->addComparator(
+        'toBeTruthy',
+        new Tusk\Comparator(
+            function ($value) {
+                return (bool)$value;
+            },
+            'to be truthy'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toBeFalsy',
+        new Tusk\Comparator(
+            function ($value) {
+                return !$value;
+            },
+            'to be falsy'
+        )
+    );
+
+    /**
+     * Arrays
+     */
+
+    $expectationFactory->addComparator(
+        'toContain',
+        new Tusk\Comparator(
+            function ($value, $expected) {
+                return in_array($expected, $value);
+            },
+            'to contain {0}'
+        )
+    );
+
+    /**
+     * Types
+     */
+
+    $expectationFactory->addComparator(
+        'toBeType',
+        new Tusk\Comparator(
+            function ($value, $type) {
+                return gettype($value) === $type;
+            },
+            'to be type {0}'
+        )
+    );
+
+    $expectationFactory->addComparator(
+        'toBeInstanceOf',
+        new Tusk\Comparator(
+            function ($value, $class) {
+                return $value instanceof $class;
+            },
+            "to be an instance of {0}"
+        )
+    );
+
+    /**
+     * Exceptions
+     */
+
+    $expectationFactory->addComparator(
+        'toThrow',
+        new Tusk\Comparator(
+            function ($value, $className = null, $message = null) {
+                try {
+                    $value();
+
+                } catch (\Exception $e) {
+                    if (($className === null || $e instanceof $className)
+                        && ($message === null || $e->getMessage() === $message)
+                    ) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            'to throw {0} {1}'
+        )
+    );
+
+    return $expectationFactory;
+};
+
+$container['Suite'] = function ($c) {
+    return function($description, $body) use ($c) {
+        return new Tusk\Suite($description, $body, $c['Environment']);
+    };
+};
+
+$container['Spec'] = function($c) {
+    return function($description, $body) use ($c) {
+        return new Tusk\Spec(
+            $description,
+            $body,
+            $c['Environment'],
+            $c['Scoreboard']
+        );
+    };
+};
 
 function describe($description, \Closure $body)
 {
-    $env = Environment::getInstance();
-
-    $context = new Suite($description, $body, $env);
-    $context->execute();
+    global $container;
+    $suite = $container['Suite']($description, $body);
+    $suite->execute();
 }
 
 function it($description, \Closure $body)
 {
-    $env = Environment::getInstance();
-
-    $context = new Spec($description, $body, $env, $env->getScoreboard());
-    $context->execute();
+    global $container;
+    $spec = $container['Spec']($description, $body);
+    $spec->execute();
 }
 
 function expect($value)
 {
-    $env = Environment::getInstance();
-
-    return $env->getExpectationFactory()->createExpectation(
-        $value,
-        $env->getContext()
-    );
+    global $container;
+    return $container['ExpectationFactory']->createExpectation($value);
 }
 
 function beforeEach(\Closure $body)
 {
-    Environment::getInstance()->getContext()->addPreHook($body);
+    global $container;
+    $container['Environment']->getContext()->addPreHook($body);
 }
 
 function afterEach(\Closure $body)
 {
-    Environment::getInstance()->getContext()->addPostHook($body);
+    global $container;
+    $container['Environment']->getContext()->addPostHook($body);
 }
 
-/*
- * Add default comparators
- */
-
-$expectationFactory = Environment::getInstance()->getExpectationFactory();
-
-/**
- * Equality
- */
-
-$expectationFactory->addComparator(
-    'toBe',
-    new Comparator(
-        function ($value, $expected) {
-            return $value === $expected;
-        },
-        'to be {0}'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toEqual',
-    new Comparator(
-        function ($value, $expected) {
-            return $value == $expected;
-        },
-        ' to equal {0}'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toBeGreaterThan',
-    new Comparator(
-        function ($value, $expected) {
-            return $value > $expected;
-        },
-        'to be greater than {0}'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toBeGreaterThanOrEqualTo',
-    new Comparator(
-        function ($value, $expected) {
-            return $value >= $expected;
-        },
-        'to be greater than or equal to {0}'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toBeLessThan',
-    new Comparator(
-        function ($value, $expected) {
-            return $value < $expected;
-        },
-        'to be less than {0}'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toBeLessThanOrEqualTo',
-    new Comparator(
-        function ($value, $expected) {
-            return $value <= $expected;
-        },
-        'to be less than or equal to {0}'
-    )
-);
-
-/**
- * Truthiness
- */
-
-$expectationFactory->addComparator(
-    'toBeTruthy',
-    new Comparator(
-        function ($value) {
-            return (bool)$value;
-        },
-        'to be truthy'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toBeFalsy',
-    new Comparator(
-        function ($value) {
-            return !$value;
-        },
-        'to be falsy'
-    )
-);
-
-/**
- * Arrays
- */
-
-$expectationFactory->addComparator(
-    'toContain',
-    new Comparator(
-        function ($value, $expected) {
-            return in_array($expected, $value);
-        },
-        'to contain {0}'
-    )
-);
-
-/**
- * Types
- */
-
-$expectationFactory->addComparator(
-    'toBeType',
-    new Comparator(
-        function ($value, $type) {
-            return gettype($value) === $type;
-        },
-        'to be type {0}'
-    )
-);
-
-$expectationFactory->addComparator(
-    'toBeInstanceOf',
-    new Comparator(
-        function ($value, $class) {
-            return $value instanceof $class;
-        },
-        "to be an instance of {0}"
-    )
-);
-
-/**
- * Exceptions
- */
-
-$expectationFactory->addComparator(
-    'toThrow',
-    new Comparator(
-        function ($value, $className = null, $message = null) {
-            try {
-                $value();
-
-            } catch (\Exception $e) {
-                if (($className === null || $e instanceof $className)
-                    && ($message === null || $e->getMessage() === $message)
-                ) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-        'to throw {0} {1}'
-    )
-);
 
 if ($argc < 2) {
     die("Syntax: tusk <filename>\n");
@@ -210,6 +228,4 @@ foreach (array_slice($argv, 1) as $filename) {
     require($filename);
 }
 
-$scoreboard = Environment::getInstance()->getScoreboard();
-
-echo "{$scoreboard->getPassCount()} specs, {$scoreboard->getFailCount()} failures\n";
+echo "{$container['Scoreboard']->getPassCount()} specs, {$container['Scoreboard']->getFailCount()} failures\n";

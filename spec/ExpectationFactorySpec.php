@@ -6,7 +6,9 @@ use Tusk\ExpectationFactory;
 
 describe('ExpectationFactory', function() {
     beforeEach(function() {
-        $this->factory = new ExpectationFactory();
+        $this->env = m::mock('Tusk\Environment');
+
+        $this->factory = new ExpectationFactory($this->env);
     });
 
     describe('createExpectation()', function() {
@@ -24,7 +26,9 @@ describe('ExpectationFactory', function() {
                 $this->factory->addComparator($key, $value);
             }
 
-            $expectation = $this->factory->createExpectation($value, $context);
+            $this->env->shouldReceive(['getContext' => $context]);
+
+            $expectation = $this->factory->createExpectation($value);
 
             expect($expectation)->toBeInstanceOf('Tusk\Expectation');
             expect($expectation)->toEqual(new Expectation($value, $comparators, $context));
