@@ -12,15 +12,15 @@ describe('Scoreboard', function() {
         $this->scoreboard->pass();
     });
 
-    describe('getPassCount()', function() {
-        it('should return the number of passing assertions', function() {
-            expect($this->scoreboard->getPassCount())->toBe(3);
+    describe('getFailCount()', function() {
+        it('should return the number of failed specs', function() {
+            expect($this->scoreboard->getFailCount())->toBe(2);
         });
     });
 
-    describe('getFailCount()', function() {
-        it('should return the number of failing assertions', function() {
-            expect($this->scoreboard->getFailCount())->toBe(2);
+    describe('getSpecCount()', function() {
+        it('should the sum of all passed and failed specs', function() {
+            expect($this->scoreboard->getSpecCount())->toBe(5);
         });
     });
 });

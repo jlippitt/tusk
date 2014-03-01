@@ -18,13 +18,13 @@ class Scoreboard
         ++$this->failCount;
     }
 
-    public function getPassCount()
-    {
-        return $this->passCount;
-    }
-
     public function getFailCount()
     {
         return $this->failCount;
+    }
+
+    public function getSpecCount()
+    {
+        return $this->passCount + $this->failCount;
     }
 }

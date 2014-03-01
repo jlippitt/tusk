@@ -36,7 +36,7 @@ class Command extends BaseCommand
 
         $failCount = $this->scoreboard->getFailCount();
 
-        $result = "{$this->scoreboard->getPassCount()} specs, {$failCount} failures";
+        $result = "{$this->scoreboard->getSpecCount()} specs, {$failCount} failures";
 
         if ($failCount === 0) {
             $result = "<info>{$result}</info>";
