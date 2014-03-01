@@ -33,15 +33,7 @@ function afterEach(\Closure $body)
     $container['Environment']->getContext()->addPostHook($body);
 }
 
-
-if ($argc < 2) {
-    die("Syntax: tusk <filename>\n");
-}
-
-foreach (array_slice($argv, 1) as $filename) {
-    require($filename);
-}
-
-$scoreboard = Tusk\Container::getInstance()['Scoreboard'];
-
-echo "{$scoreboard->getPassCount()} specs, {$scoreboard->getFailCount()} failures\n";
+Tusk\Container::getInstance()['Application']->run(
+    null,
+    Tusk\Container::getInstance()['ConsoleOutput']
+);

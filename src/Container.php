@@ -3,6 +3,7 @@
 namespace Tusk;
 
 use Pimple;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class Container extends Pimple
 {
@@ -20,6 +21,18 @@ class Container extends Pimple
     public function __construct()
     {
         parent::__construct();
+
+        $this['Application'] = function($c) {
+            return new Application($c['Command']);
+        };
+
+        $this['Command'] = function($c) {
+            return new Command($c['Scoreboard']);
+        };
+
+        $this['ConsoleOutput'] = function() {
+            return new ConsoleOutput();
+        };
 
         $this['Environment'] = function() {
             return new Environment();
