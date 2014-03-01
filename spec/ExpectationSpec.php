@@ -11,7 +11,7 @@ describe('Expectation', function() {
             $this->expectation = new Expectation(
                 12,
                 ['toBe' => $this->comparator],
-                m::mock('Tusk\AbstractContext', ['getDescription' => ''])
+                m::mock('Tusk\AbstractContext', ['getDescription' => 'foo'])
             );
         });
 
@@ -59,10 +59,14 @@ describe('Expectation', function() {
             $this->comparator
                 ->shouldReceive('formatMessage')
                 ->with(12, [15, 16], true)
+                ->andReturn('bar')
                 ->once()
             ;
 
-            expect(function() { $this->expectation->notToBe(15, 16); })->toThrow('Tusk\ExpectationException');
+            expect(function() { $this->expectation->notToBe(15, 16); })->toThrow(
+                'Tusk\ExpectationException',
+                "Expectation failed for 'foo': bar" 
+            );
         });
 
         it('should throw an exception if the comparator does not exist', function() {

@@ -188,12 +188,14 @@ $expectationFactory->addComparator(
 $expectationFactory->addComparator(
     'toThrow',
     new Comparator(
-        function ($value, $exceptionClass) {
+        function ($value, $className, $message = null) {
             try {
                 $value();
 
             } catch (\Exception $e) {
-                if ($e instanceof $exceptionClass) {
+                if ($e instanceof $className
+                    && ($message === null || $e->getMessage() === $message)
+                ) {
                     return true;
                 }
             }
