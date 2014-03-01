@@ -45,10 +45,6 @@ function afterEach(\Closure $body)
     Environment::getInstance()->getContext()->addPostHook($body);
 }
 
-if ($argc !== 2) {
-    die("Syntax: tusk <filename>\n");
-}
-
 /*
  * Add default comparators
  */
@@ -206,7 +202,13 @@ $expectationFactory->addComparator(
     )
 );
 
-require($argv[1]);
+if ($argc < 2) {
+    die("Syntax: tusk <filename>\n");
+}
+
+foreach (array_slice($argv, 1) as $filename) {
+    require($filename);
+}
 
 $scoreboard = Environment::getInstance()->getScoreboard();
 
