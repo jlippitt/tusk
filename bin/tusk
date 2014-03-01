@@ -21,7 +21,7 @@ function it($description, \Closure $body)
 {
     $env = Environment::getInstance();
 
-    $context = new Spec($description, $body, $env);
+    $context = new Spec($description, $body, $env, $env->getScoreboard());
     $context->execute();
 }
 
@@ -188,12 +188,12 @@ $expectationFactory->addComparator(
 $expectationFactory->addComparator(
     'toThrow',
     new Comparator(
-        function ($value, $className, $message = null) {
+        function ($value, $className = null, $message = null) {
             try {
                 $value();
 
             } catch (\Exception $e) {
-                if ($e instanceof $className
+                if (($className === null || $e instanceof $className)
                     && ($message === null || $e->getMessage() === $message)
                 ) {
                     return true;
@@ -202,10 +202,12 @@ $expectationFactory->addComparator(
 
             return false;
         },
-        'to throw {0}'
+        'to throw {0} {1}'
     )
 );
 
 require($argv[1]);
 
-echo "All specs passed\n";
+$scoreboard = Environment::getInstance()->getScoreboard();
+
+echo "{$scoreboard->getPassCount()} specs, {$scoreboard->getFailCount()} failures\n";

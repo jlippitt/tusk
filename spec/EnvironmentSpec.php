@@ -5,9 +5,11 @@ use Tusk\Environment;
 
 describe('Environment', function() {
     beforeEach(function() {
+        $this->scoreboard = m::mock('Tusk\Scoreboard');
+
         $this->expectationFactory = m::mock('Tusk\ExpectationFactory');
 
-        $this->env = new Environment($this->expectationFactory);
+        $this->env = new Environment($this->scoreboard, $this->expectationFactory);
     });
 
     afterEach(function() {
@@ -27,6 +29,14 @@ describe('Environment', function() {
             $this->env->setContext(null);
 
             expect($this->env->getContext())->toBe(null);
+        });
+    });
+
+    describe('getScoreboard()', function() {
+        it('should return the scoreboard passed into the constructor', function() {
+            expect($this->env->getScoreboard())->toBe(
+                $this->scoreboard
+            );
         });
     });
 

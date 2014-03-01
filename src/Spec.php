@@ -6,21 +6,31 @@ class Spec extends AbstractContext
 {
     private $body;
 
-    public function __construct($description, \Closure $body, Environment $env)
+    private $scoreboard;
+
+    public function __construct($description, \Closure $body, Environment $env, Scoreboard $scoreboard)
     {
         parent::__construct($description, $env);
 
         $this->body = $body;
+        $this->scoreboard = $scoreboard;
     }
 
     protected function executeBody()
     {
         $scope = clone $this->getParent()->getScope();
 
-        $this->getParent()->executePreHooks($scope);
+        try {
+            $this->getParent()->executePreHooks($scope);
 
-        $this->body->bindTo($scope, $scope)->__invoke();
+            $this->body->bindTo($scope, $scope)->__invoke();
 
-        $this->getParent()->executePostHooks($scope);
+            $this->getParent()->executePostHooks($scope);
+
+            $this->scoreboard->pass();
+
+        } catch (\Exception $e) {
+            $this->scoreboard->fail();
+        }
     }
 }

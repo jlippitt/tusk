@@ -6,6 +6,8 @@ class Environment
 {
     private $context;
 
+    private $scoreboard;
+
     private $expectationFactory;
 
     public static function getInstance()
@@ -13,14 +15,17 @@ class Environment
         static $instance;
 
         if ($instance === null) {
-            $instance = new self(new ExpectationFactory());
+            $instance = new self(new Scoreboard(), new ExpectationFactory());
         }
 
         return $instance;
     }
 
-    public function __construct(ExpectationFactory $expectationFactory)
-    {
+    public function __construct(
+        Scoreboard $scoreboard,
+        ExpectationFactory $expectationFactory
+    ) {
+        $this->scoreboard = $scoreboard;
         $this->expectationFactory = $expectationFactory;
     }
 
@@ -32,6 +37,11 @@ class Environment
     public function getContext()
     {
         return $this->context;
+    }
+
+    public function getScoreboard()
+    {
+        return $this->scoreboard;
     }
 
     public function getExpectationFactory()
