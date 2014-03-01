@@ -6,15 +6,13 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 function describe($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $suite = $container['Suite']($description, $body);
-    $suite->execute();
+    $container['Suite']($description, $body)->execute();
 }
 
 function it($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $spec = $container['Spec']($description, $body);
-    $spec->execute();
+    $container['Spec']($description, $body)->execute();
 }
 
 function expect($value)
