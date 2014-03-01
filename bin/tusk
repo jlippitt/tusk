@@ -3,219 +3,35 @@
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
-$container = new Pimple();
-
-$container['Environment'] = function() {
-    return new Tusk\Environment();
-};
-
-$container['Scoreboard'] = function() {
-    return new Tusk\Scoreboard();
-};
-
-$container['ExpectationFactory'] = function($c) {
-    $expectationFactory = new Tusk\ExpectationFactory($c['Environment']);
-
-    /**
-     * Equality
-     */
-
-    $expectationFactory->addComparator(
-        'toBe',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return $value === $expected;
-            },
-            'to be {0}'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toEqual',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return $value == $expected;
-            },
-            ' to equal {0}'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toBeGreaterThan',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return $value > $expected;
-            },
-            'to be greater than {0}'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toBeGreaterThanOrEqualTo',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return $value >= $expected;
-            },
-            'to be greater than or equal to {0}'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toBeLessThan',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return $value < $expected;
-            },
-            'to be less than {0}'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toBeLessThanOrEqualTo',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return $value <= $expected;
-            },
-            'to be less than or equal to {0}'
-        )
-    );
-
-    /**
-     * Truthiness
-     */
-
-    $expectationFactory->addComparator(
-        'toBeTruthy',
-        new Tusk\Comparator(
-            function ($value) {
-                return (bool)$value;
-            },
-            'to be truthy'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toBeFalsy',
-        new Tusk\Comparator(
-            function ($value) {
-                return !$value;
-            },
-            'to be falsy'
-        )
-    );
-
-    /**
-     * Arrays
-     */
-
-    $expectationFactory->addComparator(
-        'toContain',
-        new Tusk\Comparator(
-            function ($value, $expected) {
-                return in_array($expected, $value);
-            },
-            'to contain {0}'
-        )
-    );
-
-    /**
-     * Types
-     */
-
-    $expectationFactory->addComparator(
-        'toBeType',
-        new Tusk\Comparator(
-            function ($value, $type) {
-                return gettype($value) === $type;
-            },
-            'to be type {0}'
-        )
-    );
-
-    $expectationFactory->addComparator(
-        'toBeInstanceOf',
-        new Tusk\Comparator(
-            function ($value, $class) {
-                return $value instanceof $class;
-            },
-            "to be an instance of {0}"
-        )
-    );
-
-    /**
-     * Exceptions
-     */
-
-    $expectationFactory->addComparator(
-        'toThrow',
-        new Tusk\Comparator(
-            function ($value, $className = null, $message = null) {
-                try {
-                    $value();
-
-                } catch (\Exception $e) {
-                    if (($className === null || $e instanceof $className)
-                        && ($message === null || $e->getMessage() === $message)
-                    ) {
-                        return true;
-                    }
-                }
-
-                return false;
-            },
-            'to throw {0} {1}'
-        )
-    );
-
-    return $expectationFactory;
-};
-
-$container['Suite'] = function ($c) {
-    return function($description, $body) use ($c) {
-        return new Tusk\Suite($description, $body, $c['Environment']);
-    };
-};
-
-$container['Spec'] = function($c) {
-    return function($description, $body) use ($c) {
-        return new Tusk\Spec(
-            $description,
-            $body,
-            $c['Environment'],
-            $c['Scoreboard']
-        );
-    };
-};
-
 function describe($description, \Closure $body)
 {
-    global $container;
+    $container = Tusk\Container::getInstance();
     $suite = $container['Suite']($description, $body);
     $suite->execute();
 }
 
 function it($description, \Closure $body)
 {
-    global $container;
+    $container = Tusk\Container::getInstance();
     $spec = $container['Spec']($description, $body);
     $spec->execute();
 }
 
 function expect($value)
 {
-    global $container;
+    $container = Tusk\Container::getInstance();
     return $container['ExpectationFactory']->createExpectation($value);
 }
 
 function beforeEach(\Closure $body)
 {
-    global $container;
+    $container = Tusk\Container::getInstance();
     $container['Environment']->getContext()->addPreHook($body);
 }
 
 function afterEach(\Closure $body)
 {
-    global $container;
+    $container = Tusk\Container::getInstance();
     $container['Environment']->getContext()->addPostHook($body);
 }
 
@@ -228,4 +44,6 @@ foreach (array_slice($argv, 1) as $filename) {
     require($filename);
 }
 
-echo "{$container['Scoreboard']->getPassCount()} specs, {$container['Scoreboard']->getFailCount()} failures\n";
+$scoreboard = Tusk\Container::getInstance()['Scoreboard'];
+
+echo "{$scoreboard->getPassCount()} specs, {$scoreboard->getFailCount()} failures\n";
