@@ -3,6 +3,7 @@
 
 require_once(__DIR__ . '/../vendor/autoload.php');
 
+use Tusk\Comparator;
 use Tusk\Environment;
 use Tusk\Expectation;
 use Tusk\Spec;
@@ -47,6 +48,161 @@ function afterEach(\Closure $body)
 if ($argc !== 2) {
     die("Syntax: tusk <filename>\n");
 }
+
+/*
+ * Add default comparators
+ */
+
+$expectationFactory = Environment::getInstance()->getExpectationFactory();
+
+/**
+ * Equality
+ */
+
+$expectationFactory->addComparator(
+    'toBe',
+    new Comparator(
+        function ($value, $expected) {
+            return $value === $expected;
+        },
+        'to be {0}'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toEqual',
+    new Comparator(
+        function ($value, $expected) {
+            return $value == $expected;
+        },
+        ' to equal {0}'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toBeGreaterThan',
+    new Comparator(
+        function ($value, $expected) {
+            return $value > $expected;
+        },
+        'to be greater than {0}'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toBeGreaterThanOrEqualTo',
+    new Comparator(
+        function ($value, $expected) {
+            return $value >= $expected;
+        },
+        'to be greater than or equal to {0}'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toBeLessThan',
+    new Comparator(
+        function ($value, $expected) {
+            return $value < $expected;
+        },
+        'to be less than {0}'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toBeLessThanOrEqualTo',
+    new Comparator(
+        function ($value, $expected) {
+            return $value <= $expected;
+        },
+        'to be less than or equal to {0}'
+    )
+);
+
+/**
+ * Truthiness
+ */
+
+$expectationFactory->addComparator(
+    'toBeTruthy',
+    new Comparator(
+        function ($value) {
+            return (bool)$value;
+        },
+        'to be truthy'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toBeFalsy',
+    new Comparator(
+        function ($value) {
+            return !$value;
+        },
+        'to be falsy'
+    )
+);
+
+/**
+ * Arrays
+ */
+
+$expectationFactory->addComparator(
+    'toContain',
+    new Comparator(
+        function ($value, $expected) {
+            return in_array($expected, $value);
+        },
+        'to contain {0}'
+    )
+);
+
+/**
+ * Types
+ */
+
+$expectationFactory->addComparator(
+    'toBeType',
+    new Comparator(
+        function ($value, $type) {
+            return gettype($value) === $type;
+        },
+        'to be type {0}'
+    )
+);
+
+$expectationFactory->addComparator(
+    'toBeInstanceOf',
+    new Comparator(
+        function ($value, $class) {
+            return $value instanceof $class;
+        },
+        "to be an instance of {0}"
+    )
+);
+
+/**
+ * Exceptions
+ */
+
+$expectationFactory->addComparator(
+    'toThrow',
+    new Comparator(
+        function ($value, $exceptionClass) {
+            try {
+                $value();
+
+            } catch (\Exception $e) {
+                if ($e instanceof $exceptionClass) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+        'to throw {0}'
+    )
+);
 
 require($argv[1]);
 
