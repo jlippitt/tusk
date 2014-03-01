@@ -4,6 +4,10 @@ use Mockery as m;
 use Tusk\Expectation;
 
 describe('Expectation', function() {
+    afterEach(function() {
+        m::close();
+    });
+
     describe('__call()', function() {
         beforeEach(function() {
             $this->comparator = m::mock('Tusk\Comparator');

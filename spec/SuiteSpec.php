@@ -4,6 +4,10 @@ use Mockery as m;
 use Tusk\Suite;
 
 describe('Suite', function() {
+    afterEach(function() {
+        m::close();
+    });
+
     describe('hook methods', function() {
         $class = new \ReflectionClass('Tusk\AbstractContext');
         $this->parentProperty = $class->getProperty('parent');

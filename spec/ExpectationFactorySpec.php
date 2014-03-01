@@ -11,6 +11,10 @@ describe('ExpectationFactory', function() {
         $this->factory = new ExpectationFactory($this->env);
     });
 
+    afterEach(function() {
+        m::close();
+    });
+
     describe('createExpectation()', function() {
         it('should create an expectation with the comparators added in addComparator()', function() {
             $value = 'foo';
