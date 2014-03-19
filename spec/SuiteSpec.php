@@ -102,7 +102,11 @@ describe('Suite', function() {
 
             $parent = m::mock('Tusk\Suite', ['getScope' => $scope]);
 
-            $env = m::mock('Tusk\Environment', ['getContext' => $parent, 'setContext' => '']);
+            $env = m::mock('Tusk\Environment', [
+                'getContext' => $parent,
+                'setContext' => '',
+                'isSkipFlagSet' => false
+            ]);
 
             $bodyCalled = false;
 
@@ -123,7 +127,11 @@ describe('Suite', function() {
         });
 
         it('should execute body using a new scope, if parent is not set', function() {
-            $env = m::mock('Tusk\Environment', ['getContext' => null, 'setContext' => '']);
+            $env = m::mock('Tusk\Environment', [
+                'getContext' => null,
+                'setContext' => '',
+                'isSkipFlagSet' => false
+            ]);
 
             $bodyCalled = false;
 

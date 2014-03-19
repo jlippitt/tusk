@@ -33,12 +33,12 @@ abstract class AbstractContext
 
         $this->env->setContext($this);
 
-        $this->executeBody();
+        $this->executeBody($this->env->isSkipFlagSet());
 
         $this->env->setContext($this->parent);
     }
 
-    protected abstract function executeBody();
+    protected abstract function executeBody($skip = false);
 
     protected function getParent()
     {

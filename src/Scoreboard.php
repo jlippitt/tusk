@@ -12,6 +12,8 @@ class Scoreboard
 
     private $failed = [];
 
+    private $skipped = 0;
+
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
@@ -29,14 +31,25 @@ class Scoreboard
         $this->output->write('<error>F</error>');
     }
 
+    public function skip()
+    {
+        ++$this->skipped;
+        $this->output->write('<comment>S</comment>');
+    }
+
+    public function getSpecCount()
+    {
+        return $this->passed + count($this->failed) + $this->skipped;
+    }
+
     public function getFailCount()
     {
         return count($this->failed);
     }
 
-    public function getSpecCount()
+    public function getSkipCount()
     {
-        return $this->passed + count($this->failed);
+        return $this->skipped;
     }
 
     public function getFailedSpecs()

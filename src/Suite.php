@@ -56,7 +56,7 @@ class Suite extends AbstractContext
         return $this->scope;
     }
 
-    protected function executeBody()
+    protected function executeBody($skip = false)
     {
         if ($this->getParent() !== null) {
             $this->scope = clone $this->getParent()->getScope();

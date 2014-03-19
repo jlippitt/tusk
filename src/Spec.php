@@ -16,21 +16,26 @@ class Spec extends AbstractContext
         $this->scoreboard = $scoreboard;
     }
 
-    protected function executeBody()
+    protected function executeBody($skip = false)
     {
-        $scope = clone $this->getParent()->getScope();
+        if ($skip) {
+            $this->scoreboard->skip();
 
-        try {
-            $this->getParent()->executePreHooks($scope);
+        } else {
+            $scope = clone $this->getParent()->getScope();
 
-            $this->body->bindTo($scope, $scope)->__invoke();
+            try {
+                $this->getParent()->executePreHooks($scope);
 
-            $this->getParent()->executePostHooks($scope);
+                $this->body->bindTo($scope, $scope)->__invoke();
 
-            $this->scoreboard->pass();
+                $this->getParent()->executePostHooks($scope);
 
-        } catch (\Exception $e) {
-            $this->scoreboard->fail($this->getDescription(), $e->getMessage());
+                $this->scoreboard->pass();
+
+            } catch (\Exception $e) {
+                $this->scoreboard->fail($this->getDescription(), $e->getMessage());
+            }
         }
     }
 }

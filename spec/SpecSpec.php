@@ -26,7 +26,8 @@ describe('Spec', function() {
                 'Tusk\Environment',
                 array(
                     'getContext' => $parent,
-                    'setContext' => ''
+                    'setContext' => '',
+                    'isSkipFlagSet' => false
                 )
             );
 
@@ -95,18 +96,19 @@ describe('Spec', function() {
                     'executePreHooks' => null,
                     'executePostHooks' => null
                 ]);
+
+                $this->env = m::mock('Tusk\Environment', [
+                    'getContext' => $this->parent,
+                    'setContext' => null,
+                    'isSkipFlagSet' => false
+                ]);
             });
 
             afterEach(function() {
-                $env = m::mock('Tusk\Environment', [
-                    'getContext' => $this->parent,
-                    'setContext' => null
-                ]);
-
                 $spec = new Spec(
                     'description',
                     $this->body,
-                    $env,
+                    $this->env,
                     $this->scoreboard
                 );
 
@@ -161,6 +163,17 @@ describe('Spec', function() {
                 $this->scoreboard
                     ->shouldReceive('fail')
                     ->with('spec description', 'post-hook broke')
+                    ->once()
+                ;
+            });
+
+            it('should mark the spec as skipped if the skip flag is set on the environment', function() {
+                $this->env->shouldReceive(['isSkipFlagSet' => true]);
+
+                $this->body = function() {};
+
+                $this->scoreboard
+                    ->shouldReceive('skip')
                     ->once()
                 ;
             });

@@ -9,10 +9,28 @@ function describe($description, \Closure $body)
     $container['Suite']($description, $body)->execute();
 }
 
+function xdescribe($description, \Closure $body)
+{
+    $container = Tusk\Container::getInstance();
+
+    $container['Environment']->skip(function() use ($description, $body) {
+        describe($description, $body);
+    });
+}
+
 function it($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
     $container['Spec']($description, $body)->execute();
+}
+
+function xit($description, \Closure $body)
+{
+    $container = Tusk\Container::getInstance();
+
+    $container['Environment']->skip(function() use ($description, $body) {
+        it($description, $body);
+    });
 }
 
 function expect($value)

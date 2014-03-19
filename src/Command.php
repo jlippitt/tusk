@@ -42,12 +42,18 @@ class Command extends BaseCommand
 
         $failCount = $this->scoreboard->getFailCount();
 
-        $result = "{$this->scoreboard->getSpecCount()} specs, {$failCount} failures";
+        $skipCount = $this->scoreboard->getSkipCount();
 
-        if ($failCount === 0) {
-            $result = "<info>{$result}</info>";
-        } else {
+        $result = "{$this->scoreboard->getSpecCount()} specs, {$failCount} failed, {$skipCount} skipped";
+
+        if ($failCount > 0) {
             $result = "<error>{$result}</error>";
+
+        } elseif ($skipCount > 0) {
+            $result = "<comment>{$result}</comment>";
+            
+        } else {
+            $result = "<info>{$result}</info>";
         }
 
         $output->writeln("\n{$result}\n");

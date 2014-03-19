@@ -65,6 +65,34 @@ describe('Scoreboard', function() {
         });
     });
 
+    describe('skip()', function() {
+        it('should increment the spec count', function() {
+            expect($this->scoreboard->getSpecCount())->toBe(0);
+            $this->scoreboard->skip();
+            expect($this->scoreboard->getSpecCount())->toBe(1);
+            $this->scoreboard->skip();
+            expect($this->scoreboard->getSpecCount())->toBe(2);
+        });
+
+        it('should increment the skip count', function() {
+            expect($this->scoreboard->getSkipCount())->toBe(0);
+            $this->scoreboard->skip();
+            expect($this->scoreboard->getSkipCount())->toBe(1);
+            $this->scoreboard->skip();
+            expect($this->scoreboard->getSkipCount())->toBe(2);
+        });
+
+        it('should print the letter S to the console', function() {
+            $this->output
+                ->shouldReceive('write')
+                ->with('<comment>S</comment>')
+                ->once()
+            ;
+
+            $this->scoreboard->skip();
+        });
+    });
+
     describe('getFailedSpecs()', function() {
         it('should return an associative array mapping spec descriptions to failure messages', function() {
             $this->scoreboard->fail('spec 1', 'it broke');

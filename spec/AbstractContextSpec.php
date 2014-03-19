@@ -10,7 +10,8 @@ describe('AbstractContext', function() {
             'Tusk\Environment',
             array(
                 'getContext' => $this->parent,
-                'setContext' => ''
+                'setContext' => '',
+                'isSkipFlagSet' => false
             )
         );
 

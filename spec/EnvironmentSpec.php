@@ -27,4 +27,20 @@ describe('Environment', function() {
             expect($this->env->getContext())->toBe(null);
         });
     });
+
+    describe('skip()', function() {
+        it('should set skip flag while argument is executing', function() {
+            $bodyExecuted = false;
+
+            expect($this->env->isSkipFlagSet())->toBe(false);
+
+            $this->env->skip(function() use (&$bodyExecuted) {
+                $bodyExecuted = true;
+                expect($this->env->isSkipFlagSet())->toBe(true);
+            });
+
+            expect($bodyExecuted)->toBe(true);
+            expect($this->env->isSkipFlagSet())->toBe(false);
+        });
+    });
 });
