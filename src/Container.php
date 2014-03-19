@@ -152,6 +152,19 @@ class Container extends Pimple
             );
 
             /**
+             * Strings
+             */
+            $expectationFactory->addComparator(
+                'toMatch',
+                new Comparator(
+                    function ($value, $pattern) {
+                        return preg_match($pattern, $value) > 0;
+                    },
+                    'to match {0}'
+                )
+            );
+
+            /**
              * Types
              */
 

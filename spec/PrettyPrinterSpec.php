@@ -9,14 +9,56 @@ describe('PrettyPrinter', function() {
 
     describe('format()', function() {
         it('should replace placeholders with the numbered arguments', function() {
-            expect($this->prettyPrinter->format('to be {1} {2} {0}', 12, [1, 2, 3]))->toBe(
-                'Expected 12 to be 2 3 1'
+            expect($this->prettyPrinter->format('to be {1} {2} {0}', 12.4, [1, 2, 3]))->toBe(
+                'Expected 12.4 to be 2 3 1'
             );
         });
 
         it('should include the word "not" if comparison is inverted', function() {
-            expect($this->prettyPrinter->format('to be {1} {2} {0}', 12, [1, 2, 3], true))->toBe(
-                'Expected 12 not to be 2 3 1'
+            expect($this->prettyPrinter->format('to be {1} {2} {0}', 12.4, [1, 2, 3], true))->toBe(
+                'Expected 12.4 not to be 2 3 1'
+            );
+        });
+
+        it('should surround string arguments with single quotes', function() {
+            expect($this->prettyPrinter->format('to be {0}', 'foo', ['bar']))->toBe(
+                "Expected 'foo' to be 'bar'"
+            );
+        });
+
+        it('should display arrays in easy to read format', function() {
+            $output = "Expected [0 => 'a', 1 => 'b', 2 => 'c'] to be ['x' => 1, 'y' => 2, 'z' => 3]";
+
+            expect(
+                $this->prettyPrinter->format(
+                    'to be {0}',
+                    ['a', 'b', 'c'],
+                    [['x' => 1, 'y' => 2, 'z' => 3]]
+                )
+            )->toBe($output);
+        });
+
+        it('should call __toString() on object if available', function() {
+            $object = new \SplFileInfo('php://output');
+
+            expect($this->prettyPrinter->format('to be {0}', $object, [$object]))->toBe(
+                'Expected php://output to be php://output'
+            );
+        });
+
+        it('should display class name if object cannot be converted to string', function() {
+            $object = new \stdClass();
+
+            expect($this->prettyPrinter->format('to be {0}', $object, [$object]))->toBe(
+                'Expected <stdClass> to be <stdClass>'
+            );
+        });
+
+        it('should display something sensible for resources', function() {
+            $resource = fopen('php://output', 'w');
+
+            expect($this->prettyPrinter->format('to be {0}', $resource, [$resource]))->toMatch(
+                '/^Expected Resource id #\d+ to be Resource id #\d+$/'
             );
         });
     });

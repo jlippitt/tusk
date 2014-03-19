@@ -6,7 +6,7 @@ class PrettyPrinter
 {
     public function format($format, $value, array $args, $inverted = false)
     {
-        $message = "Expected {$value} ";
+        $message = "Expected {$this->formatValue($value)} ";
 
         if ($inverted) {
             $message .= 'not ';
@@ -15,11 +15,37 @@ class PrettyPrinter
         $message .= preg_replace_callback(
             '/\{(\d+)\}/',
             function ($match) use ($args) {
-                return $args[(int)$match[1]];
+                return $this->formatValue($args[(int)$match[1]]);
             },
             $format
         );
 
         return $message;
+    }
+
+    private function formatValue($value)
+    {
+        if (is_string($value)) {
+            $value = "'{$value}'";
+
+        } elseif (is_array($value)) {
+            $elements = [];
+
+            foreach ($value as $key => $element) {
+                $elements[] = $this->formatValue($key) .
+                    ' => ' . $this->formatValue($element);
+            }
+
+            $value = '[' . implode(', ', $elements) . ']';
+
+        } elseif (is_object($value)) {
+            if (method_exists($value, '__toString')) {
+                $value = (string)$value;
+            } else {
+                $value = '<' . get_class($value) . '>';
+            }
+        }
+
+        return $value;
     }
 }
