@@ -26,7 +26,7 @@ class PrettyPrinter
     private function formatValue($value)
     {
         if (is_string($value)) {
-            $value = "'{$value}'";
+            $value = "'" . str_replace("'", "\\'", $value) . "'";
 
         } elseif (is_array($value)) {
             $elements = [];

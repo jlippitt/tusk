@@ -26,6 +26,12 @@ describe('PrettyPrinter', function() {
             );
         });
 
+        it('should escape quotes within string arguments', function() {
+            expect($this->prettyPrinter->format('to be {0}', "'foo'", ["b'a'r"]))->toBe(
+                "Expected '\\'foo\\'' to be 'b\\'a\\'r'"
+            );
+        });
+
         it('should display arrays in easy to read format', function() {
             $output = "Expected [0 => 'a', 1 => 'b', 2 => 'c'] to be ['x' => 1, 'y' => 2, 'z' => 3]";
 
