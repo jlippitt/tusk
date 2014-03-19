@@ -10,7 +10,7 @@ describe('Expectation', function() {
 
     describe('__call()', function() {
         beforeEach(function() {
-            $this->comparator = m::mock('Tusk\Comparator', [
+            $this->matcher = m::mock('Tusk\Matcher', [
                 'getMessageFormat' => 'failed'
             ]);
 
@@ -18,13 +18,13 @@ describe('Expectation', function() {
 
             $this->expectation = new Expectation(
                 12,
-                ['toBe' => $this->comparator],
+                ['toBe' => $this->matcher],
                 $this->prettyPrinter
             );
         });
 
-        it('should invoke a comparator object with the expectation value', function() {
-            $this->comparator
+        it('should invoke a matcher object with the expectation value', function() {
+            $this->matcher
                 ->shouldReceive('compare')
                 ->with(12, [13, 14])
                 ->andReturn(true)
@@ -34,7 +34,7 @@ describe('Expectation', function() {
         });
 
         it('should throw an exception if the comparison returns false', function() {
-            $this->comparator
+            $this->matcher
                 ->shouldReceive('compare')
                 ->with(12, [15, 16])
                 ->andReturn(false)
@@ -53,8 +53,8 @@ describe('Expectation', function() {
             );
         });
 
-        it('should reverse the above behaviour if comparator name is preceded by "not"', function() {
-            $this->comparator
+        it('should reverse the above behaviour if matcher name is preceded by "not"', function() {
+            $this->matcher
                 ->shouldReceive('compare')
                 ->with(12, [13, 14])
                 ->andReturn(false)
@@ -62,7 +62,7 @@ describe('Expectation', function() {
 
             $this->expectation->notToBe(13, 14);
 
-            $this->comparator
+            $this->matcher
                 ->shouldReceive('compare')
                 ->with(12, [15, 16])
                 ->andReturn(true)
@@ -81,7 +81,7 @@ describe('Expectation', function() {
             );
         });
 
-        it('should throw an exception if the comparator does not exist', function() {
+        it('should throw an exception if the matcher does not exist', function() {
             expect(function() { $this->expectation->notToExist(13, 14); })->toThrow('BadMethodCallException');
         });
     });

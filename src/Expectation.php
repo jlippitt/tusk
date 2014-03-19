@@ -6,17 +6,17 @@ class Expectation
 {
     private $value;
 
-    private $comparators;
+    private $matchers;
 
     private $prettyPrinter;
 
     public function __construct(
         $value,
-        array $comparators,
+        array $matchers,
         PrettyPrinter $prettyPrinter
     ) {
         $this->value = $value;
-        $this->comparators = $comparators;
+        $this->matchers = $matchers;
         $this->prettyPrinter = $prettyPrinter;
     }
 
@@ -30,13 +30,13 @@ class Expectation
             $inverted = false;
         }
 
-        if (array_key_exists($method, $this->comparators)) {
-            $comparator = $this->comparators[$method];
+        if (array_key_exists($method, $this->matchers)) {
+            $matcher = $this->matchers[$method];
 
-            if ($comparator->compare($this->value, $args) === $inverted) {
+            if ($matcher->compare($this->value, $args) === $inverted) {
                 throw new ExpectationException(
                     $this->prettyPrinter->format(
-                        $comparator->getMessageFormat(),
+                        $matcher->getMessageFormat(),
                         $this->value,
                         $args,
                         $inverted
@@ -46,7 +46,7 @@ class Expectation
 
         } else {
             throw new \BadMethodCallException(
-                "Method '{$method}' does not map to a known comparator"
+                "Method '{$method}' does not map to a known matcher"
             );
         }
     }

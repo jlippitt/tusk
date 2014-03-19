@@ -1,8 +1,8 @@
 <?php
 
-use Tusk\Comparator;
+use Tusk\Matcher;
 
-describe('Comparator', function() {
+describe('Matcher', function() {
     describe('compare()', function() {
         it('should call body callback with combined value/args array', function() {
             $value = 1;
@@ -13,16 +13,16 @@ describe('Comparator', function() {
                 expect(func_get_args())->toBe(array(1, 2, 3));
             };
 
-            $comparator = new Comparator($body, 'ignore');
+            $matcher = new Matcher($body, 'ignore');
 
-            $comparator->compare($value, $args);
+            $matcher->compare($value, $args);
         });
     });
 
     describe('getMessageFormat()', function() {
         it('should return the format string passed to the constructor', function() {
-            $comparator = new Comparator(function() {}, 'format string');
-            expect($comparator->getMessageFormat())->toBe('format string');
+            $matcher = new Matcher(function() {}, 'format string');
+            expect($matcher->getMessageFormat())->toBe('format string');
         });
     });
 });

@@ -2,7 +2,7 @@
 
 namespace Tusk;
 
-class Comparator
+class Matcher
 {
     private $body;
 

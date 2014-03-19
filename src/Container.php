@@ -53,9 +53,9 @@ class Container extends Pimple
              * Equality
              */
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBe',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return $value === $expected;
                     },
@@ -63,9 +63,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toEqual',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return $value == $expected;
                     },
@@ -73,9 +73,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeGreaterThan',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return $value > $expected;
                     },
@@ -83,9 +83,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeGreaterThanOrEqualTo',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return $value >= $expected;
                     },
@@ -93,9 +93,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeLessThan',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return $value < $expected;
                     },
@@ -103,9 +103,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeLessThanOrEqualTo',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return $value <= $expected;
                     },
@@ -117,9 +117,9 @@ class Container extends Pimple
              * Truthiness
              */
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeTruthy',
-                new Comparator(
+                new Matcher(
                     function ($value) {
                         return (bool)$value;
                     },
@@ -127,9 +127,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeFalsy',
-                new Comparator(
+                new Matcher(
                     function ($value) {
                         return !$value;
                     },
@@ -141,9 +141,9 @@ class Container extends Pimple
              * Arrays
              */
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toContain',
-                new Comparator(
+                new Matcher(
                     function ($value, $expected) {
                         return in_array($expected, $value);
                     },
@@ -154,9 +154,9 @@ class Container extends Pimple
             /**
              * Strings
              */
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toMatch',
-                new Comparator(
+                new Matcher(
                     function ($value, $pattern) {
                         return preg_match($pattern, $value) > 0;
                     },
@@ -168,9 +168,9 @@ class Container extends Pimple
              * Types
              */
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeType',
-                new Comparator(
+                new Matcher(
                     function ($value, $type) {
                         return gettype($value) === $type;
                     },
@@ -178,9 +178,9 @@ class Container extends Pimple
                 )
             );
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toBeInstanceOf',
-                new Comparator(
+                new Matcher(
                     function ($value, $class) {
                         return $value instanceof $class;
                     },
@@ -192,9 +192,9 @@ class Container extends Pimple
              * Exceptions
              */
 
-            $expectationFactory->addComparator(
+            $expectationFactory->addMatcher(
                 'toThrow',
-                new Comparator(
+                new Matcher(
                     function ($value, $className = null, $message = null) {
                         try {
                             $value();

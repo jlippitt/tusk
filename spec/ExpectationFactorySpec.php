@@ -16,18 +16,18 @@ describe('ExpectationFactory', function() {
     });
 
     describe('createExpectation()', function() {
-        it('should create an expectation with the comparators added in addComparator()', function() {
+        it('should create an expectation with the matchers added in addMatcher()', function() {
             $value = 'foo';
 
-            $comparators = [
-                'comparator1' => m::mock('Tusk\Comparator'),
-                'comparator2' => m::mock('Tusk\Comparator')
+            $matchers = [
+                'matcher1' => m::mock('Tusk\Matcher'),
+                'matcher2' => m::mock('Tusk\Matcher')
             ];
 
             $context = m::mock('Tusk\AbstractContext');
 
-            foreach ($comparators as $key => $value) {
-                $this->factory->addComparator($key, $value);
+            foreach ($matchers as $key => $value) {
+                $this->factory->addMatcher($key, $value);
             }
 
             $expectation = $this->factory->createExpectation($value);
@@ -37,7 +37,7 @@ describe('ExpectationFactory', function() {
             expect($expectation)->toEqual(
                 new Expectation(
                     $value,
-                    $comparators,
+                    $matchers,
                     $this->prettyPrinter
                 )
             );
