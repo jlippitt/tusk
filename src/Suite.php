@@ -12,10 +12,12 @@ class Suite extends AbstractContext
 
     private $scope;
 
-    public function __construct($description, \Closure $body, Environment $env)
-    {
-        parent::__construct($description, $env);
-
+    public function __construct(
+        $description,
+        \Closure $body,
+        AbstractContext $parent = null
+    ) {
+        parent::__construct($description, $parent);
         $this->body = $body;
     }
 
@@ -56,7 +58,7 @@ class Suite extends AbstractContext
         return $this->scope;
     }
 
-    protected function executeBody($skip = false)
+    public function execute($skip = false)
     {
         if ($this->getParent() !== null) {
             $this->scope = clone $this->getParent()->getScope();

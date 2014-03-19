@@ -22,15 +22,6 @@ describe('Spec', function() {
                 )
             );
 
-            $env = m::mock(
-                'Tusk\Environment',
-                array(
-                    'getContext' => $parent,
-                    'setContext' => '',
-                    'isSkipFlagSet' => false
-                )
-            );
-
             // Precisely check the order in which things occur:
             // 1. Pre hooks
             // 2. Body
@@ -82,7 +73,13 @@ describe('Spec', function() {
                 ->andReturnUsing($executePostHooks)
             ;
 
-            $spec = new Spec('ignore', $body, $env, m::mock('Tusk\Scoreboard', ['pass' => null]));
+            $spec = new Spec(
+                'ignore',
+                $body,
+                $parent,
+                m::mock('Tusk\Scoreboard', ['pass' => null])
+            );
+
             $spec->execute();
         });
 
@@ -97,49 +94,46 @@ describe('Spec', function() {
                     'executePostHooks' => null
                 ]);
 
-                $this->env = m::mock('Tusk\Environment', [
-                    'getContext' => $this->parent,
-                    'setContext' => null,
-                    'isSkipFlagSet' => false
-                ]);
-            });
+                $this->exception = null;
 
-            afterEach(function() {
-                $spec = new Spec(
+                $exception = &$this->exception;
+
+                $body = function() use (&$exception) {
+                    if ($exception !== null) {
+                        throw $exception;
+                    }
+                };
+
+                $this->spec = new Spec(
                     'description',
-                    $this->body,
-                    $this->env,
+                    $body,
+                    $this->parent,
                     $this->scoreboard
                 );
-
-                $spec->execute();
             });
 
             it('should pass the spec if no exceptions are thrown', function() {
-                $this->body = function() {};
-
                 $this->scoreboard
                     ->shouldReceive('pass')
                     ->once()
                 ;
 
+                $this->spec->execute();
             });
 
             it('should fail the spec if body throws an exception', function() {
-                $this->body = function () {
-                    throw new \Exception('body broke');
-                };
+                $this->exception = new \Exception('body broke');
 
                 $this->scoreboard
                     ->shouldReceive('fail')
                     ->with('spec description', 'body broke')
                     ->once()
                 ;
+
+                $this->spec->execute();
             });
 
             it('should fail the spec if pre-hook throws an exception', function() {
-                $this->body = function () {};
-
                 $this->parent
                     ->shouldReceive('executePreHooks')
                     ->andThrow(new \Exception('pre-hook broke'))
@@ -150,11 +144,11 @@ describe('Spec', function() {
                     ->with('spec description', 'pre-hook broke')
                     ->once()
                 ;
+
+                $this->spec->execute();
             });
 
             it('should fail the spec if post-hook throws an exception', function() {
-                $this->body = function () {};
-
                 $this->parent
                     ->shouldReceive('executePostHooks')
                     ->andThrow(new \Exception('post-hook broke'))
@@ -165,17 +159,17 @@ describe('Spec', function() {
                     ->with('spec description', 'post-hook broke')
                     ->once()
                 ;
+
+                $this->spec->execute();
             });
 
             it('should mark the spec as skipped if the skip flag is set on the environment', function() {
-                $this->env->shouldReceive(['isSkipFlagSet' => true]);
-
-                $this->body = function() {};
-
                 $this->scoreboard
                     ->shouldReceive('skip')
                     ->once()
                 ;
+
+                $this->spec->execute(true);
             });
         });
     });

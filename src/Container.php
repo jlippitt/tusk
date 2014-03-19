@@ -217,17 +217,17 @@ class Container extends Pimple
         };
 
         $this['Suite'] = function ($c) {
-            return function($description, $body) use ($c) {
-                return new Suite($description, $body, $c['Environment']);
+            return function($description, $body, $parent = null) use ($c) {
+                return new Suite($description, $body, $parent);
             };
         };
 
         $this['Spec'] = function($c) {
-            return function($description, $body) use ($c) {
+            return function($description, $body, $parent) use ($c) {
                 return new Spec(
                     $description,
                     $body,
-                    $c['Environment'],
+                    $parent,
                     $c['Scoreboard']
                 );
             };

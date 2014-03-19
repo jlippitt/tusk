@@ -8,14 +8,12 @@ class Environment
 
     private $skipFlag = false;
 
-    public function setContext(AbstractContext $context = null)
+    public function execute(AbstractContext $context)
     {
+        $oldContext = $this->context;
         $this->context = $context;
-    }
-
-    public function getContext()
-    {
-        return $this->context;
+        $context->execute($this->skipFlag);
+        $this->context = $oldContext;
     }
 
     public function skip(\Closure $body)
@@ -25,8 +23,8 @@ class Environment
         $this->skipFlag = false;
     }
 
-    public function isSkipFlagSet()
+    public function getContext()
     {
-        return $this->skipFlag;
+        return $this->context;
     }
 }

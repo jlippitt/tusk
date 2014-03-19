@@ -9,35 +9,27 @@ describe('Suite', function() {
     });
 
     describe('hook methods', function() {
-        $class = new \ReflectionClass('Tusk\AbstractContext');
-        $this->parentProperty = $class->getProperty('parent');
-        $this->parentProperty->setAccessible(true);
-
         beforeEach(function() {
-            $this->suite = new Suite('ignore', function() {}, m::mock('Tusk\Environment'));
-
             $this->scope = new \stdClass();
             $this->scope->called = [];
         });
 
         describe('executePreHooks()', function() {
             it('should execute added pre-hooks using the given scope', function() {
+                $suite = new Suite('ignore', function() {});
+
                 for ($i = 1; $i <= 3; ++$i) {
-                    $this->suite->addPreHook(function() use ($i) {
+                    $suite->addPreHook(function() use ($i) {
                         $this->called[] = $i;
                     });
                 }
 
-                $this->suite->executePreHooks($this->scope);
+                $suite->executePreHooks($this->scope);
 
                 expect($this->scope->called)->toBe([1, 2, 3]);
             });
 
             it('should execute hooks from parent suite *before* executing its own hooks, if parent is set', function() {
-                $this->suite->addPreHook(function() {
-                    $this->called[] = 'self';
-                });
-
                 $parent = m::mock('Tusk\Suite');
 
                 $parent
@@ -48,10 +40,13 @@ describe('Suite', function() {
                     })
                 ;
 
-                // Set the value of the parent property using reflection
-                $this->parentProperty->setValue($this->suite, $parent);
+                $suite = new Suite('ignore', function() {}, $parent);
 
-                $this->suite->executePreHooks($this->scope);
+                $suite->addPreHook(function() {
+                    $this->called[] = 'self';
+                });
+
+                $suite->executePreHooks($this->scope);
 
                 expect($this->scope->called)->toBe(['parent', 'self']);
             });
@@ -59,22 +54,20 @@ describe('Suite', function() {
 
         describe('executePostHooks()', function() {
             it('should execute added post-hooks using the given scope', function() {
+                $suite = new Suite('ignore', function() {});
+
                 for ($i = 1; $i <= 3; ++$i) {
-                    $this->suite->addPostHook(function() use ($i) {
+                    $suite->addPostHook(function() use ($i) {
                         $this->called[] = $i;
                     });
                 }
 
-                $this->suite->executePostHooks($this->scope);
+                $suite->executePostHooks($this->scope);
 
                 expect($this->scope->called)->toBe([1, 2, 3]);
             });
 
             it('should execute hooks from parent suite *after* executing its own hooks, if parent is set', function() {
-                $this->suite->addPostHook(function() {
-                    $this->called[] = 'self';
-                });
-
                 $parent = m::mock('Tusk\Suite');
 
                 $parent
@@ -85,10 +78,13 @@ describe('Suite', function() {
                     })
                 ;
 
-                // Set the value of the parent property using reflection
-                $this->parentProperty->setValue($this->suite, $parent);
+                $suite = new Suite('ignore', function() {}, $parent);
 
-                $this->suite->executePostHooks($this->scope);
+                $suite->addPostHook(function() {
+                    $this->called[] = 'self';
+                });
+
+                $suite->executePostHooks($this->scope);
 
                 expect($this->scope->called)->toBe(['self', 'parent']);
             });
@@ -102,12 +98,6 @@ describe('Suite', function() {
 
             $parent = m::mock('Tusk\Suite', ['getScope' => $scope]);
 
-            $env = m::mock('Tusk\Environment', [
-                'getContext' => $parent,
-                'setContext' => '',
-                'isSkipFlagSet' => false
-            ]);
-
             $bodyCalled = false;
 
             $body = function() use (&$bodyCalled, $scope) {
@@ -116,7 +106,7 @@ describe('Suite', function() {
                 expect($this)->notToBe($scope);
             };
 
-            $suite = new Suite('ignore', $body, $env);
+            $suite = new Suite('ignore', $body, $parent);
             $suite->execute();
 
             expect($bodyCalled)->toBe(true);
@@ -127,12 +117,6 @@ describe('Suite', function() {
         });
 
         it('should execute body using a new scope, if parent is not set', function() {
-            $env = m::mock('Tusk\Environment', [
-                'getContext' => null,
-                'setContext' => '',
-                'isSkipFlagSet' => false
-            ]);
-
             $bodyCalled = false;
 
             $body = function() use (&$bodyCalled) {
@@ -141,7 +125,7 @@ describe('Suite', function() {
                 expect($this)->toEqual(new \stdClass());
             };
 
-            $suite = new Suite('ignore', $body, $env);
+            $suite = new Suite('ignore', $body);
             $suite->execute();
 
             expect($bodyCalled)->toBe(true);

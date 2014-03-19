@@ -8,15 +8,18 @@ class Spec extends AbstractContext
 
     private $scoreboard;
 
-    public function __construct($description, \Closure $body, Environment $env, Scoreboard $scoreboard)
-    {
-        parent::__construct($description, $env);
-
+    public function __construct(
+        $description,
+        \Closure $body,
+        AbstractContext $parent,
+        Scoreboard $scoreboard
+    ) {
+        parent::__construct($description, $parent);
         $this->body = $body;
         $this->scoreboard = $scoreboard;
     }
 
-    protected function executeBody($skip = false)
+    public function execute($skip = false)
     {
         if ($skip) {
             $this->scoreboard->skip();

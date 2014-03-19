@@ -6,14 +6,12 @@ abstract class AbstractContext
 {
     private $description;
 
-    private $env;
-
     private $parent;
 
-    public function __construct($description, Environment $env)
+    public function __construct($description, AbstractContext $parent = null)
     {
         $this->description = $description;
-        $this->env = $env;
+        $this->parent = $parent;
     }
 
     public function getDescription()
@@ -27,18 +25,7 @@ abstract class AbstractContext
         return $description . $this->description;
     }
 
-    public function execute()
-    {
-        $this->parent = $this->env->getContext();
-
-        $this->env->setContext($this);
-
-        $this->executeBody($this->env->isSkipFlagSet());
-
-        $this->env->setContext($this->parent);
-    }
-
-    protected abstract function executeBody($skip = false);
+    public abstract function execute($skip = false);
 
     protected function getParent()
     {
