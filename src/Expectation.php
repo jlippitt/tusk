@@ -8,16 +8,12 @@ class Expectation
 
     private $comparators;
 
-    private $context;
-
     public function __construct(
         $value,
-        array $comparators,
-        AbstractContext $context
+        array $comparators
     ) {
         $this->value = $value;
         $this->comparators = $comparators;
-        $this->context = $context;
     }
 
     public function __call($method, array $args)
@@ -35,8 +31,7 @@ class Expectation
 
             if ($comparator($this->value, $args) === $inverted) {
                 throw new ExpectationException(
-                    $comparator->formatMessage($this->value, $args, $inverted),
-                    $this->context
+                    $comparator->formatMessage($this->value, $args, $inverted)
                 );
             }
 

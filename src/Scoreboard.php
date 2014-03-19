@@ -8,9 +8,9 @@ class Scoreboard
 {
     private $output;
 
-    private $passCount = 0;
+    private $passed = 0;
 
-    private $failCount = 0;
+    private $failed = [];
 
     public function __construct(OutputInterface $output)
     {
@@ -19,23 +19,28 @@ class Scoreboard
 
     public function pass()
     {
+        ++$this->passed;
         $this->output->write('<info>.</info>');
-        ++$this->passCount;
     }
 
-    public function fail()
+    public function fail($spec, $reason)
     {
+        $this->failed[$spec] = $reason;
         $this->output->write('<error>F</error>');
-        ++$this->failCount;
     }
 
     public function getFailCount()
     {
-        return $this->failCount;
+        return count($this->failed);
     }
 
     public function getSpecCount()
     {
-        return $this->passCount + $this->failCount;
+        return $this->passed + count($this->failed);
+    }
+
+    public function getFailedSpecs()
+    {
+        return $this->failed;
     }
 }

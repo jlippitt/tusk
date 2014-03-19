@@ -14,8 +14,7 @@ describe('Expectation', function() {
 
             $this->expectation = new Expectation(
                 12,
-                ['toBe' => $this->comparator],
-                m::mock('Tusk\AbstractContext', ['getDescription' => 'foo'])
+                ['toBe' => $this->comparator]
             );
         });
 
@@ -39,10 +38,14 @@ describe('Expectation', function() {
             $this->comparator
                 ->shouldReceive('formatMessage')
                 ->with(12, [15, 16], false)
+                ->andReturn('foo')
                 ->once()
             ;
 
-            expect(function() { $this->expectation->toBe(15, 16); })->toThrow('Tusk\ExpectationException');
+            expect(function() { $this->expectation->toBe(15, 16); })->toThrow(
+                'Tusk\ExpectationException',
+                'foo'
+            );
         });
 
         it('should reverse the above behaviour if comparator name is preceded by "not"', function() {
@@ -69,7 +72,7 @@ describe('Expectation', function() {
 
             expect(function() { $this->expectation->notToBe(15, 16); })->toThrow(
                 'Tusk\ExpectationException',
-                "Expectation failed for 'foo': bar" 
+                'bar'
             );
         });
 

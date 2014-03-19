@@ -30,7 +30,7 @@ class Spec extends AbstractContext
             $this->scoreboard->pass();
 
         } catch (\Exception $e) {
-            $this->scoreboard->fail();
+            $this->scoreboard->fail($this->getDescription(), $e->getMessage());
         }
     }
 }

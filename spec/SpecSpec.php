@@ -90,6 +90,7 @@ describe('Spec', function() {
                 $this->scoreboard = m::mock('Tusk\Scoreboard');
 
                 $this->parent = m::mock('Tusk\Suite', [
+                    'getDescription' => 'spec',
                     'getScope' => new \stdClass(),
                     'executePreHooks' => null,
                     'executePostHooks' => null
@@ -103,7 +104,7 @@ describe('Spec', function() {
                 ]);
 
                 $spec = new Spec(
-                    'ignore',
+                    'description',
                     $this->body,
                     $env,
                     $this->scoreboard
@@ -112,7 +113,7 @@ describe('Spec', function() {
                 $spec->execute();
             });
 
-            it('should increment passed specs if no exceptions are thrown', function() {
+            it('should pass the spec if no exceptions are thrown', function() {
                 $this->body = function() {};
 
                 $this->scoreboard
@@ -122,41 +123,44 @@ describe('Spec', function() {
 
             });
 
-            it('should increment failed specs if body throws an exception', function() {
+            it('should fail the spec if body throws an exception', function() {
                 $this->body = function () {
-                    throw new \Exception('blah');
+                    throw new \Exception('body broke');
                 };
 
                 $this->scoreboard
                     ->shouldReceive('fail')
+                    ->with('spec description', 'body broke')
                     ->once()
                 ;
             });
 
-            it('should increment failed specs if pre-hook throws an exception', function() {
+            it('should fail the spec if pre-hook throws an exception', function() {
                 $this->body = function () {};
 
                 $this->parent
                     ->shouldReceive('executePreHooks')
-                    ->andThrow(new \Exception('blah'))
+                    ->andThrow(new \Exception('pre-hook broke'))
                 ;
 
                 $this->scoreboard
                     ->shouldReceive('fail')
+                    ->with('spec description', 'pre-hook broke')
                     ->once()
                 ;
             });
 
-            it('should increment failed specs if post-hook throws an exception', function() {
+            it('should fail the spec if post-hook throws an exception', function() {
                 $this->body = function () {};
 
                 $this->parent
                     ->shouldReceive('executePostHooks')
-                    ->andThrow(new \Exception('blah'))
+                    ->andThrow(new \Exception('post-hook broke'))
                 ;
 
                 $this->scoreboard
                     ->shouldReceive('fail')
+                    ->with('spec description', 'post-hook broke')
                     ->once()
                 ;
             });

@@ -40,17 +40,17 @@ describe('Scoreboard', function() {
     describe('fail()', function() {
         it('should increment the spec count', function() {
             expect($this->scoreboard->getSpecCount())->toBe(0);
-            $this->scoreboard->pass();
+            $this->scoreboard->fail('spec 1', 'it broke');
             expect($this->scoreboard->getSpecCount())->toBe(1);
-            $this->scoreboard->pass();
+            $this->scoreboard->fail('spec 2', 'it broke even more');
             expect($this->scoreboard->getSpecCount())->toBe(2);
         });
 
         it('should increment the fail count', function() {
             expect($this->scoreboard->getFailCount())->toBe(0);
-            $this->scoreboard->fail();
+            $this->scoreboard->fail('spec 1', 'it broke');
             expect($this->scoreboard->getFailCount())->toBe(1);
-            $this->scoreboard->fail();
+            $this->scoreboard->fail('spec 2', 'it broke even more');
             expect($this->scoreboard->getFailCount())->toBe(2);
         });
 
@@ -61,7 +61,19 @@ describe('Scoreboard', function() {
                 ->once()
             ;
 
-            $this->scoreboard->fail();
+            $this->scoreboard->fail('spec 1', 'it broke');
+        });
+    });
+
+    describe('getFailedSpecs()', function() {
+        it('should return an associative array mapping spec descriptions to failure messages', function() {
+            $this->scoreboard->fail('spec 1', 'it broke');
+            $this->scoreboard->fail('spec 2', 'it broke even more');
+
+            expect($this->scoreboard->getFailedSpecs())->toBe([
+                'spec 1' => 'it broke',
+                'spec 2' => 'it broke even more'
+            ]);
         });
     });
 });

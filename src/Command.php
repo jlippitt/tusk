@@ -34,6 +34,12 @@ class Command extends BaseCommand
             require($file);
         }
 
+        $output->writeln('');
+
+        foreach ($this->scoreboard->getFailedSpecs() as $spec => $reason) {
+            $output->writeln("\n<error>Spec '{$spec}' failed: {$reason}</error>");
+        }
+
         $failCount = $this->scoreboard->getFailCount();
 
         $result = "{$this->scoreboard->getSpecCount()} specs, {$failCount} failures";
@@ -44,6 +50,6 @@ class Command extends BaseCommand
             $result = "<error>{$result}</error>";
         }
 
-        $output->writeln($result);
+        $output->writeln("\n{$result}\n");
     }
 }
