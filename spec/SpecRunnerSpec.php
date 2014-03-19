@@ -1,11 +1,11 @@
 <?php
 
 use Mockery as m;
-use Tusk\Environment;
+use Tusk\SpecRunner;
 
-describe('Environment', function() {
+describe('SpecRunner', function() {
     beforeEach(function() {
-        $this->env = new Environment();
+        $this->specRunner = new SpecRunner();
     });
 
     afterEach(function() {
@@ -24,9 +24,9 @@ describe('Environment', function() {
                 ->with(false)
                 ->once()
                 ->andReturnUsing(function() use ($outerContext, $innerContext) {
-                    expect($this->env->getContext())->toBe($outerContext);
-                    $this->env->execute($innerContext);
-                    expect($this->env->getContext())->toBe($outerContext);
+                    expect($this->specRunner->getContext())->toBe($outerContext);
+                    $this->specRunner->execute($innerContext);
+                    expect($this->specRunner->getContext())->toBe($outerContext);
                 })
             ;
 
@@ -35,16 +35,16 @@ describe('Environment', function() {
                 ->with(false)
                 ->once()
                 ->andReturnUsing(function() use ($innerContext, &$innerContextCalled) {
-                    expect($this->env->getContext())->toBe($innerContext);
+                    expect($this->specRunner->getContext())->toBe($innerContext);
                     $innerContextCalled = true;
                 })
             ;
 
-            expect($this->env->getContext())->toBe(null);
+            expect($this->specRunner->getContext())->toBe(null);
 
-            $this->env->execute($outerContext);
+            $this->specRunner->execute($outerContext);
 
-            expect($this->env->getContext())->toBe(null);
+            expect($this->specRunner->getContext())->toBe(null);
             expect($innerContextCalled)->toBe(true);
         });
 
@@ -59,9 +59,9 @@ describe('Environment', function() {
                 ->with(true)
                 ->once()
                 ->andReturnUsing(function() use ($outerContext, $innerContext) {
-                    expect($this->env->getContext())->toBe($outerContext);
-                    $this->env->execute($innerContext);
-                    expect($this->env->getContext())->toBe($outerContext);
+                    expect($this->specRunner->getContext())->toBe($outerContext);
+                    $this->specRunner->execute($innerContext);
+                    expect($this->specRunner->getContext())->toBe($outerContext);
                 })
             ;
 
@@ -70,18 +70,18 @@ describe('Environment', function() {
                 ->with(true)
                 ->once()
                 ->andReturnUsing(function() use ($innerContext, &$innerContextCalled) {
-                    expect($this->env->getContext())->toBe($innerContext);
+                    expect($this->specRunner->getContext())->toBe($innerContext);
                     $innerContextCalled = true;
                 })
             ;
 
-            expect($this->env->getContext())->toBe(null);
+            expect($this->specRunner->getContext())->toBe(null);
 
-            $this->env->skip(function() use ($outerContext) {
-                $this->env->execute($outerContext);
+            $this->specRunner->skip(function() use ($outerContext) {
+                $this->specRunner->execute($outerContext);
             });
 
-            expect($this->env->getContext())->toBe(null);
+            expect($this->specRunner->getContext())->toBe(null);
             expect($innerContextCalled)->toBe(true);
         });
     });

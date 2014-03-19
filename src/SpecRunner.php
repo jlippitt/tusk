@@ -2,7 +2,7 @@
 
 namespace Tusk;
 
-class Environment
+class SpecRunner
 {
     private $context;
 

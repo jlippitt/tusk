@@ -163,7 +163,7 @@ describe('Spec', function() {
                 $this->spec->execute();
             });
 
-            it('should mark the spec as skipped if the skip flag is set on the environment', function() {
+            it('should mark the spec as skipped if the skip flag is set on the specRunnerironment', function() {
                 $this->scoreboard
                     ->shouldReceive('skip')
                     ->once()
