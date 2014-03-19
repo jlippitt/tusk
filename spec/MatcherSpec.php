@@ -3,7 +3,7 @@
 use Tusk\Matcher;
 
 describe('Matcher', function() {
-    describe('compare()', function() {
+    describe('match()', function() {
         it('should call body callback with combined value/args array', function() {
             $value = 1;
 
@@ -15,7 +15,7 @@ describe('Matcher', function() {
 
             $matcher = new Matcher($body, 'ignore');
 
-            $matcher->compare($value, $args);
+            $matcher->match($value, $args);
         });
     });
 

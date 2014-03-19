@@ -25,7 +25,7 @@ describe('Expectation', function() {
 
         it('should invoke a matcher object with the expectation value', function() {
             $this->matcher
-                ->shouldReceive('compare')
+                ->shouldReceive('match')
                 ->with(12, [13, 14])
                 ->andReturn(true)
             ;
@@ -35,7 +35,7 @@ describe('Expectation', function() {
 
         it('should throw an exception if the comparison returns false', function() {
             $this->matcher
-                ->shouldReceive('compare')
+                ->shouldReceive('match')
                 ->with(12, [15, 16])
                 ->andReturn(false)
             ;
@@ -55,7 +55,7 @@ describe('Expectation', function() {
 
         it('should reverse the above behaviour if matcher name is preceded by "not"', function() {
             $this->matcher
-                ->shouldReceive('compare')
+                ->shouldReceive('match')
                 ->with(12, [13, 14])
                 ->andReturn(false)
             ;
@@ -63,7 +63,7 @@ describe('Expectation', function() {
             $this->expectation->notToBe(13, 14);
 
             $this->matcher
-                ->shouldReceive('compare')
+                ->shouldReceive('match')
                 ->with(12, [15, 16])
                 ->andReturn(true)
             ;

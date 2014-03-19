@@ -33,7 +33,7 @@ class Expectation
         if (array_key_exists($method, $this->matchers)) {
             $matcher = $this->matchers[$method];
 
-            if ($matcher->compare($this->value, $args) === $inverted) {
+            if ($matcher->match($this->value, $args) === $inverted) {
                 throw new ExpectationException(
                     $this->prettyPrinter->format(
                         $matcher->getMessageFormat(),

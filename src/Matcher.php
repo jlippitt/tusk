@@ -14,7 +14,7 @@ class Matcher
         $this->messageFormat = $messageFormat;
     }
 
-    public function compare($value, array $args)
+    public function match($value, array $args)
     {
         array_unshift($args, $value);
 
