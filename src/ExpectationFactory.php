@@ -4,13 +4,13 @@ namespace Tusk;
 
 class ExpectationFactory
 {
-    private $env;
+    private $prettyPrinter;
 
     private $comparators = array();
 
-    public function __construct(Environment $env)
+    public function __construct(PrettyPrinter $prettyPrinter)
     {
-        $this->env = $env;
+        $this->prettyPrinter = $prettyPrinter;
     }
 
     public function addComparator($name, Comparator $comparator)
@@ -23,7 +23,7 @@ class ExpectationFactory
         return new Expectation(
             $value,
             $this->comparators,
-            $this->env->getContext()
+            $this->prettyPrinter
         );
     }
 }

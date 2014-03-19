@@ -6,37 +6,23 @@ class Comparator
 {
     private $body;
 
-    private $message;
+    private $messageFormat;
 
-    public function __construct(callable $body, $message)
+    public function __construct(callable $body, $messageFormat)
     {
         $this->body = $body;
-        $this->message = $message;
+        $this->messageFormat = $messageFormat;
     }
 
-    public function __invoke($value, array $args)
+    public function compare($value, array $args)
     {
         array_unshift($args, $value);
 
         return call_user_func_array($this->body, $args);
     }
 
-    public function formatMessage($value, array $args, $inverted = false)
+    public function getMessageFormat()
     {
-        $message = "Expected {$value} ";
-
-        if ($inverted) {
-            $message .= 'not ';
-        }
-
-        $message .= preg_replace_callback(
-            '/\{(\d+)\}/',
-            function ($match) use ($args) {
-                return $args[(int)$match[1]];
-            },
-            $this->message
-        );
-
-        return $message;
+        return $this->messageFormat;
     }
 }

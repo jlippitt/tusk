@@ -6,9 +6,9 @@ use Tusk\ExpectationFactory;
 
 describe('ExpectationFactory', function() {
     beforeEach(function() {
-        $this->env = m::mock('Tusk\Environment');
+        $this->prettyPrinter = m::mock('Tusk\PrettyPrinter');
 
-        $this->factory = new ExpectationFactory($this->env);
+        $this->factory = new ExpectationFactory($this->prettyPrinter);
     });
 
     afterEach(function() {
@@ -30,12 +30,17 @@ describe('ExpectationFactory', function() {
                 $this->factory->addComparator($key, $value);
             }
 
-            $this->env->shouldReceive(['getContext' => $context]);
-
             $expectation = $this->factory->createExpectation($value);
 
             expect($expectation)->toBeInstanceOf('Tusk\Expectation');
-            expect($expectation)->toEqual(new Expectation($value, $comparators, $context));
+
+            expect($expectation)->toEqual(
+                new Expectation(
+                    $value,
+                    $comparators,
+                    $this->prettyPrinter
+                )
+            );
         });
     });
 });

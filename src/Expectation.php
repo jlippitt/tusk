@@ -8,12 +8,16 @@ class Expectation
 
     private $comparators;
 
+    private $prettyPrinter;
+
     public function __construct(
         $value,
-        array $comparators
+        array $comparators,
+        PrettyPrinter $prettyPrinter
     ) {
         $this->value = $value;
         $this->comparators = $comparators;
+        $this->prettyPrinter = $prettyPrinter;
     }
 
     public function __call($method, array $args)
@@ -29,9 +33,14 @@ class Expectation
         if (array_key_exists($method, $this->comparators)) {
             $comparator = $this->comparators[$method];
 
-            if ($comparator($this->value, $args) === $inverted) {
+            if ($comparator->compare($this->value, $args) === $inverted) {
                 throw new ExpectationException(
-                    $comparator->formatMessage($this->value, $args, $inverted)
+                    $this->prettyPrinter->format(
+                        $comparator->getMessageFormat(),
+                        $this->value,
+                        $args,
+                        $inverted
+                    )
                 );
             }
 

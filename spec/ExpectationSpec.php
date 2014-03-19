@@ -10,17 +10,22 @@ describe('Expectation', function() {
 
     describe('__call()', function() {
         beforeEach(function() {
-            $this->comparator = m::mock('Tusk\Comparator');
+            $this->comparator = m::mock('Tusk\Comparator', [
+                'getMessageFormat' => 'failed'
+            ]);
+
+            $this->prettyPrinter = m::mock('Tusk\PrettyPrinter');
 
             $this->expectation = new Expectation(
                 12,
-                ['toBe' => $this->comparator]
+                ['toBe' => $this->comparator],
+                $this->prettyPrinter
             );
         });
 
         it('should invoke a comparator object with the expectation value', function() {
             $this->comparator
-                ->shouldReceive('__invoke')
+                ->shouldReceive('compare')
                 ->with(12, [13, 14])
                 ->andReturn(true)
             ;
@@ -30,14 +35,14 @@ describe('Expectation', function() {
 
         it('should throw an exception if the comparison returns false', function() {
             $this->comparator
-                ->shouldReceive('__invoke')
+                ->shouldReceive('compare')
                 ->with(12, [15, 16])
                 ->andReturn(false)
             ;
 
-            $this->comparator
-                ->shouldReceive('formatMessage')
-                ->with(12, [15, 16], false)
+            $this->prettyPrinter
+                ->shouldReceive('format')
+                ->with('failed', 12, [15, 16], false)
                 ->andReturn('foo')
                 ->once()
             ;
@@ -50,7 +55,7 @@ describe('Expectation', function() {
 
         it('should reverse the above behaviour if comparator name is preceded by "not"', function() {
             $this->comparator
-                ->shouldReceive('__invoke')
+                ->shouldReceive('compare')
                 ->with(12, [13, 14])
                 ->andReturn(false)
             ;
@@ -58,14 +63,14 @@ describe('Expectation', function() {
             $this->expectation->notToBe(13, 14);
 
             $this->comparator
-                ->shouldReceive('__invoke')
+                ->shouldReceive('compare')
                 ->with(12, [15, 16])
                 ->andReturn(true)
             ;
 
-            $this->comparator
-                ->shouldReceive('formatMessage')
-                ->with(12, [15, 16], true)
+            $this->prettyPrinter
+                ->shouldReceive('format')
+                ->with('failed', 12, [15, 16], true)
                 ->andReturn('bar')
                 ->once()
             ;

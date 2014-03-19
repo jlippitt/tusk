@@ -42,8 +42,12 @@ class Container extends Pimple
             return new Scoreboard($c['ConsoleOutput']);
         };
 
+        $this['PrettyPrinter'] = function() {
+            return new PrettyPrinter();
+        };
+
         $this['ExpectationFactory'] = function($c) {
-            $expectationFactory = new ExpectationFactory($c['Environment']);
+            $expectationFactory = new ExpectationFactory($c['PrettyPrinter']);
 
             /**
              * Equality
