@@ -38,8 +38,8 @@ class Container extends Pimple
             return new Environment();
         };
 
-        $this['Scoreboard'] = function() {
-            return new Scoreboard();
+        $this['Scoreboard'] = function($c) {
+            return new Scoreboard($c['ConsoleOutput']);
         };
 
         $this['ExpectationFactory'] = function($c) {

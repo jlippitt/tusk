@@ -1,26 +1,67 @@
 <?php
 
+use Mockery as m;
 use Tusk\Scoreboard;
 
 describe('Scoreboard', function() {
     beforeEach(function() {
-        $this->scoreboard = new Scoreboard();
-        $this->scoreboard->pass();
-        $this->scoreboard->fail();
-        $this->scoreboard->pass();
-        $this->scoreboard->fail();
-        $this->scoreboard->pass();
+        $this->output = m::mock(
+            'Symfony\Component\Console\Output\OutputInterface',
+            ['write' => null]
+        );
+
+        $this->scoreboard = new Scoreboard($this->output);
     });
 
-    describe('getFailCount()', function() {
-        it('should return the number of failed specs', function() {
-            expect($this->scoreboard->getFailCount())->toBe(2);
+    afterEach(function() {
+        m::close();
+    });
+
+    describe('pass()', function() {
+        it('should increment the spec count', function() {
+            expect($this->scoreboard->getSpecCount())->toBe(0);
+            $this->scoreboard->pass();
+            expect($this->scoreboard->getSpecCount())->toBe(1);
+            $this->scoreboard->pass();
+            expect($this->scoreboard->getSpecCount())->toBe(2);
+        });
+
+        it('should print a dot to the console', function() {
+            $this->output
+                ->shouldReceive('write')
+                ->with('<info>.</info>')
+                ->once()
+            ;
+
+            $this->scoreboard->pass();
         });
     });
 
-    describe('getSpecCount()', function() {
-        it('should the sum of all passed and failed specs', function() {
-            expect($this->scoreboard->getSpecCount())->toBe(5);
+    describe('fail()', function() {
+        it('should increment the spec count', function() {
+            expect($this->scoreboard->getSpecCount())->toBe(0);
+            $this->scoreboard->pass();
+            expect($this->scoreboard->getSpecCount())->toBe(1);
+            $this->scoreboard->pass();
+            expect($this->scoreboard->getSpecCount())->toBe(2);
+        });
+
+        it('should increment the fail count', function() {
+            expect($this->scoreboard->getFailCount())->toBe(0);
+            $this->scoreboard->fail();
+            expect($this->scoreboard->getFailCount())->toBe(1);
+            $this->scoreboard->fail();
+            expect($this->scoreboard->getFailCount())->toBe(2);
+        });
+
+        it('should print the letter F to the console', function() {
+            $this->output
+                ->shouldReceive('write')
+                ->with('<error>F</error>')
+                ->once()
+            ;
+
+            $this->scoreboard->fail();
         });
     });
 });
