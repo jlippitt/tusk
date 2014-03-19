@@ -28,6 +28,9 @@ class PrettyPrinter
         if (is_string($value)) {
             $value = "'" . str_replace("'", "\\'", $value) . "'";
 
+        } elseif (is_bool($value)) {
+            $value = $value ? 'true' : 'false';
+
         } elseif (is_array($value)) {
             $elements = [];
 

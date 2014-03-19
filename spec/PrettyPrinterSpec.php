@@ -32,6 +32,12 @@ describe('PrettyPrinter', function() {
             );
         });
 
+        it('should display strings "true" and "false" for boolean values', function() {
+            expect($this->prettyPrinter->format('to be {0}', true, [false]))->toBe(
+                'Expected true to be false'
+            );
+        });
+
         it('should display arrays in easy to read format', function() {
             $output = "Expected [0 => 'a', 1 => 'b', 2 => 'c'] to be ['x' => 1, 'y' => 2, 'z' => 3]";
 
