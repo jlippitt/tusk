@@ -2,8 +2,24 @@
 
 namespace Tusk;
 
+/**
+ * Formats expectation failure messages, displaying variables in a human-
+ * readable way.
+ *
+ * @author James Lippitt <james.lippitt@gmail.com>
+ */
 class PrettyPrinter
 {
+    /**
+     * Formats an expectation failure message using the supplied parameters
+     *
+     * @param string $format Format string. Can contain references to $args
+     * by index, e.g. '{0}', '{1}', etc.
+     * @param mixed $value Value being tested
+     * @param mixed[] $args Arguments that were passed to matcher
+     * @param bool $inverted If true, formatted output will contain the word
+     * 'not' to negate its meaning
+     */
     public function format($format, $value, array $args, $inverted = false)
     {
         $message = "Expected {$this->formatValue($value)} ";

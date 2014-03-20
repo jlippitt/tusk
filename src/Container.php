@@ -5,8 +5,19 @@ namespace Tusk;
 use Pimple;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
+/**
+ * DI container for the application. This is a singleton as it will need to be
+ * accessed by functions defined on the global namespace (i.e. 'describe', etc.)
+ *
+ * @author James Lippitt <james.lippitt@gmail.com>
+ */
 class Container extends Pimple
 {
+    /**
+     * Returns the container instance
+     *
+     * @return Container
+     */
     public static function getInstance()
     {
         static $instance;
@@ -18,6 +29,9 @@ class Container extends Pimple
         return $instance;
     }
 
+    /**
+     * Constructs the container, defining all the available services
+     */
     public function __construct()
     {
         parent::__construct();
@@ -154,6 +168,7 @@ class Container extends Pimple
             /**
              * Strings
              */
+
             $expectationFactory->addMatcher(
                 'toMatch',
                 new Matcher(

@@ -2,12 +2,23 @@
 
 namespace Tusk;
 
+/**
+ * Represents an individual spec, i.e. an 'it' block
+ *
+ * @author James Lippitt <james.lippitt@gmail.com>
+ */
 class Spec extends AbstractContext
 {
     private $body;
 
     private $scoreboard;
 
+    /**
+     * @param string $description
+     * @param \Closure $body
+     * @param AbstractContext $parent
+     * @param Scoreboard $scoreboard
+     */
     public function __construct(
         $description,
         \Closure $body,
@@ -19,6 +30,9 @@ class Spec extends AbstractContext
         $this->scoreboard = $scoreboard;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function execute($skip = false)
     {
         if ($skip) {

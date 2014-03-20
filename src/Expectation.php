@@ -2,6 +2,14 @@
 
 namespace Tusk;
 
+/**
+ * Class for an expectation, constructed by the 'expect' global function. This
+ * class no defined methods, but instead dynamically routes method calls to the
+ * appropriate Matcher instance. For example, 'toBe' and 'notToBe' will both
+ * invoke the 'toBe' matcher.
+ *
+ * @author James Lippitt <james.lippitt@gmail.com>
+ */
 class Expectation
 {
     private $value;
@@ -10,6 +18,11 @@ class Expectation
 
     private $prettyPrinter;
 
+    /**
+     * @param mixed $value
+     * @param Matcher[] $matchers
+     * @param PrettyPrinter $prettyPrinter
+     */
     public function __construct(
         $value,
         array $matchers,
@@ -20,6 +33,16 @@ class Expectation
         $this->prettyPrinter = $prettyPrinter;
     }
 
+    /**
+     * Invokes a matcher based on method name and throws an exception if the
+     * matcher returns false. If the matcher name is preceded by 'not', the
+     * exception will instead be thrown if the matcher returns true.
+     *
+     * @param string $method
+     * @param mixed[] $args
+     * @throws ExpectationException See above
+     * @throws \BadMethodCallException If no matcher matches the method name
+     */
     public function __call($method, array $args)
     {
         if (substr($method, 0, 3) === 'not') {

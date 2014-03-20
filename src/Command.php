@@ -7,14 +7,26 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * The default console command. Runs specs based on command line arguments and
+ * then displays the results.
+ *
+ * @author James Lippitt <james.lippitt@gmail.com>
+ */
 class Command extends BaseCommand
 {
+    /**
+     * @param Scoreboard $scoreboard
+     */
     public function __construct(Scoreboard $scoreboard)
     {
         parent::__construct();
         $this->scoreboard = $scoreboard;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function configure()
     {
         $this
@@ -28,6 +40,9 @@ class Command extends BaseCommand
         ;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach ($input->getArgument('files') as $file) {
