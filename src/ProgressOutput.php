@@ -15,6 +15,8 @@ class ProgressOutput
 
     private $totalSpecs;
 
+    private $specsRun = 0;
+
     /**
      * @param OutputInterface $output Console output
      */
@@ -40,6 +42,7 @@ class ProgressOutput
     public function pass()
     {
         $this->output->write('<info>.</info>');
+        $this->lineBreak();
     }
 
     /**
@@ -48,6 +51,7 @@ class ProgressOutput
     public function fail()
     {
         $this->output->write('<error>F</error>');
+        $this->lineBreak();
     }
 
     /**
@@ -56,6 +60,7 @@ class ProgressOutput
     public function skip()
     {
         $this->output->write('<comment>S</comment>');
+        $this->lineBreak();
     }
 
     /**
@@ -64,5 +69,28 @@ class ProgressOutput
     public function done()
     {
         $this->output->writeln(" {$this->totalSpecs}/{$this->totalSpecs}\n");
+    }
+
+    private function lineBreak()
+    {
+        ++$this->specsRun;
+
+        // Display the stats followed by a line break, if we have reached the appropriate
+        // number of specs
+        $maxSpecsOnLine = self::LINE_LENGTH -
+            strlen(" {$this->totalSpecs}/{$this->totalSpecs}");
+
+        if (($this->specsRun % $maxSpecsOnLine) === 0) {
+            $paddingSize = strlen((string)$this->totalSpecs) -
+                strlen((string)$this->specsRun);
+
+            $padding = '';
+
+            for ($i = 0; $i < $paddingSize; ++$i) {
+                $padding .= ' ';
+            }
+
+            $this->output->writeln(" {$padding}{$this->specsRun}/{$this->totalSpecs}\n");
+        }
     }
 }
