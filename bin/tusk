@@ -6,7 +6,7 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 function describe($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $specRunner = $container['SpecRunner'];
+    $specRunner = $container['ContextStack'];
     $specRunner->execute($container['Suite']($description, $body, $specRunner->getContext()));
 }
 
@@ -14,7 +14,7 @@ function xdescribe($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
 
-    $container['SpecRunner']->skip(function() use ($description, $body) {
+    $container['ContextStack']->skip(function() use ($description, $body) {
         describe($description, $body);
     });
 }
@@ -22,7 +22,7 @@ function xdescribe($description, \Closure $body)
 function it($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $specRunner = $container['SpecRunner'];
+    $specRunner = $container['ContextStack'];
     $specRunner->execute($container['Spec']($description, $body, $specRunner->getContext()));
 }
 
@@ -30,7 +30,7 @@ function xit($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
 
-    $container['SpecRunner']->skip(function() use ($description, $body) {
+    $container['ContextStack']->skip(function() use ($description, $body) {
         it($description, $body);
     });
 }
@@ -44,13 +44,13 @@ function expect($value)
 function beforeEach(\Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $container['SpecRunner']->getContext()->addPreHook($body);
+    $container['ContextStack']->getContext()->addPreHook($body);
 }
 
 function afterEach(\Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $container['SpecRunner']->getContext()->addPostHook($body);
+    $container['ContextStack']->getContext()->addPostHook($body);
 }
 
 Tusk\Container::getInstance()['Application']->run(

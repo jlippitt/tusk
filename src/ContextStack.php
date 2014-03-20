@@ -8,7 +8,7 @@ namespace Tusk;
  *
  * @author James Lippitt <james.lippitt@gmail.com>
  */
-class SpecRunner
+class ContextStack
 {
     private $context;
 

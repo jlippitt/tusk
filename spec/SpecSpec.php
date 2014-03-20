@@ -163,7 +163,7 @@ describe('Spec', function() {
                 $this->spec->execute();
             });
 
-            it('should mark the spec as skipped if the skip flag is set on the specRunnerironment', function() {
+            it('should mark the spec as skipped if the skip flag is set on the contextStackironment', function() {
                 $this->scoreboard
                     ->shouldReceive('skip')
                     ->once()

@@ -1,11 +1,11 @@
 <?php
 
 use Mockery as m;
-use Tusk\SpecRunner;
+use Tusk\ContextStack;
 
-describe('SpecRunner', function() {
+describe('ContextStack', function() {
     beforeEach(function() {
-        $this->specRunner = new SpecRunner();
+        $this->contextStack = new ContextStack();
     });
 
     afterEach(function() {
@@ -24,9 +24,9 @@ describe('SpecRunner', function() {
                 ->with(false)
                 ->once()
                 ->andReturnUsing(function() use ($outerContext, $innerContext) {
-                    expect($this->specRunner->getContext())->toBe($outerContext);
-                    $this->specRunner->execute($innerContext);
-                    expect($this->specRunner->getContext())->toBe($outerContext);
+                    expect($this->contextStack->getContext())->toBe($outerContext);
+                    $this->contextStack->execute($innerContext);
+                    expect($this->contextStack->getContext())->toBe($outerContext);
                 })
             ;
 
@@ -35,16 +35,16 @@ describe('SpecRunner', function() {
                 ->with(false)
                 ->once()
                 ->andReturnUsing(function() use ($innerContext, &$innerContextCalled) {
-                    expect($this->specRunner->getContext())->toBe($innerContext);
+                    expect($this->contextStack->getContext())->toBe($innerContext);
                     $innerContextCalled = true;
                 })
             ;
 
-            expect($this->specRunner->getContext())->toBe(null);
+            expect($this->contextStack->getContext())->toBe(null);
 
-            $this->specRunner->execute($outerContext);
+            $this->contextStack->execute($outerContext);
 
-            expect($this->specRunner->getContext())->toBe(null);
+            expect($this->contextStack->getContext())->toBe(null);
             expect($innerContextCalled)->toBe(true);
         });
 
@@ -59,9 +59,9 @@ describe('SpecRunner', function() {
                 ->with(true)
                 ->once()
                 ->andReturnUsing(function() use ($outerContext, $innerContext) {
-                    expect($this->specRunner->getContext())->toBe($outerContext);
-                    $this->specRunner->execute($innerContext);
-                    expect($this->specRunner->getContext())->toBe($outerContext);
+                    expect($this->contextStack->getContext())->toBe($outerContext);
+                    $this->contextStack->execute($innerContext);
+                    expect($this->contextStack->getContext())->toBe($outerContext);
                 })
             ;
 
@@ -70,18 +70,18 @@ describe('SpecRunner', function() {
                 ->with(true)
                 ->once()
                 ->andReturnUsing(function() use ($innerContext, &$innerContextCalled) {
-                    expect($this->specRunner->getContext())->toBe($innerContext);
+                    expect($this->contextStack->getContext())->toBe($innerContext);
                     $innerContextCalled = true;
                 })
             ;
 
-            expect($this->specRunner->getContext())->toBe(null);
+            expect($this->contextStack->getContext())->toBe(null);
 
-            $this->specRunner->skip(function() use ($outerContext) {
-                $this->specRunner->execute($outerContext);
+            $this->contextStack->skip(function() use ($outerContext) {
+                $this->contextStack->execute($outerContext);
             });
 
-            expect($this->specRunner->getContext())->toBe(null);
+            expect($this->contextStack->getContext())->toBe(null);
             expect($innerContextCalled)->toBe(true);
         });
     });

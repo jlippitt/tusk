@@ -48,8 +48,8 @@ class Container extends Pimple
             return new ConsoleOutput();
         };
 
-        $this['SpecRunner'] = function() {
-            return new SpecRunner();
+        $this['ContextStack'] = function() {
+            return new ContextStack();
         };
 
         $this['Scoreboard'] = function($c) {
