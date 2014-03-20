@@ -41,7 +41,7 @@ class Container extends Pimple
         };
 
         $this['Command'] = function($c) {
-            return new Command($c['SpecRunner'], $c['Scoreboard']);
+            return new Command($c['SpecRunner']);
         };
 
         $this['ConsoleOutput'] = function() {
@@ -53,11 +53,11 @@ class Container extends Pimple
         };
 
         $this['SpecRunner'] = function($c) {
-            return new SpecRunner($c['Scoreboard']);
+            return new SpecRunner($c['ProgressOutput']);
         };
 
-        $this['Scoreboard'] = function($c) {
-            return new Scoreboard($c['ConsoleOutput']);
+        $this['ProgressOutput'] = function($c) {
+            return new ProgressOutput($c['ConsoleOutput']);
         };
 
         $this['PrettyPrinter'] = function() {

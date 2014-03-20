@@ -9,13 +9,17 @@ namespace Tusk;
  */
 class SpecRunner
 {
-    private $scoreboard;
+    private $progressOutput;
 
     private $specs = [];
 
-    public function __construct(Scoreboard $scoreboard)
+    private $failed = [];
+
+    private $skipped = 0;
+
+    public function __construct(ProgressOutput $progressOutput)
     {
-        $this->scoreboard = $scoreboard;
+        $this->progressOutput = $progressOutput;
     }
 
     public function add(Spec $spec)
@@ -25,22 +29,64 @@ class SpecRunner
 
     public function run()
     {
+        $this->progressOutput->setTotalSpecs($this->getSpecCount());
+
         foreach ($this->specs as $spec) {
             if ($spec->isSkipped()) {
-                $this->scoreboard->skip();
+                ++$this->skipped;
+                $this->progressOutput->skip();
                 continue;
             }
 
             try {
                 $spec->run();
-                $this->scoreboard->pass();
+                $this->progressOutput->pass();
 
             } catch (\Exception $e) {
-                $this->scoreboard->fail(
-                    $spec->getDescription(),
-                    $e->getMessage()
-                );
+                $this->failed[$spec->getDescription()] = $e->getMessage();
+                $this->progressOutput->fail();
             }
         }
+    }
+
+    /**
+     * Returns the total number of specs
+     * 
+     * @return int
+     */
+    public function getSpecCount()
+    {
+        return count($this->specs);
+    }
+
+    /**
+     * Returns the number failed specs
+     * 
+     * @return int
+     */
+    public function getFailCount()
+    {
+        return count($this->failed);
+    }
+
+    /**
+     * Returns the number skipped specs
+     * 
+     * @return int
+     */
+    public function getSkipCount()
+    {
+        return $this->skipped;
+    }
+
+    /**
+     * Returns details of the failed specs. This will be an associative array
+     * with the spec descriptions as keys and the failure reasons as values.
+     *
+     * @return string[]
+     */
+    public function getFailedSpecs()
+    {
+        return $this->failed;
     }
 }

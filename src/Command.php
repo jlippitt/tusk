@@ -15,14 +15,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Command extends BaseCommand
 {
+    private $specRunner;
+
     /**
      * @param Scoreboard $scoreboard
      */
-    public function __construct(SpecRunner $specRunner, Scoreboard $scoreboard)
+    public function __construct(SpecRunner $specRunner)
     {
         parent::__construct();
         $this->specRunner = $specRunner;
-        $this->scoreboard = $scoreboard;
     }
 
     /**
@@ -54,15 +55,15 @@ class Command extends BaseCommand
 
         $output->writeln('');
 
-        foreach ($this->scoreboard->getFailedSpecs() as $spec => $reason) {
+        foreach ($this->specRunner->getFailedSpecs() as $spec => $reason) {
             $output->writeln("\n<error>Spec '{$spec}' failed: {$reason}</error>");
         }
 
-        $failCount = $this->scoreboard->getFailCount();
+        $failCount = $this->specRunner->getFailCount();
 
-        $skipCount = $this->scoreboard->getSkipCount();
+        $skipCount = $this->specRunner->getSkipCount();
 
-        $result = "{$this->scoreboard->getSpecCount()} specs, {$failCount} failed, {$skipCount} skipped";
+        $result = "{$this->specRunner->getSpecCount()} specs, {$failCount} failed, {$skipCount} skipped";
 
         if ($failCount > 0) {
             $result = "<error>{$result}</error>";
