@@ -24,23 +24,8 @@ class ContextStack
     {
         $oldContext = $this->context;
         $this->context = $context;
-        $context->execute($this->skipFlag);
+        $context->setUp($this->skipFlag);
         $this->context = $oldContext;
-    }
-
-    /**
-     * Executes a 'skip block', i.e. a section of code during which the 'skip
-     * flag' (denoting that specs should be skipped, but still recorded as
-     * having run) will be set to true. After the block has finished executing,
-     * it will be set back to false.
-     *
-     * @param \Closure $body
-     */
-    public function skip(\Closure $body)
-    {
-        $this->skipFlag = true;
-        $body();
-        $this->skipFlag = false;
     }
 
     /**

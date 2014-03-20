@@ -25,9 +25,10 @@ class Suite extends AbstractContext
     public function __construct(
         $description,
         \Closure $body,
-        AbstractContext $parent = null
+        AbstractContext $parent = null,
+        $skip = false
     ) {
-        parent::__construct($description, $parent);
+        parent::__construct($description, $parent, $skip);
         $this->body = $body;
     }
 
@@ -98,7 +99,7 @@ class Suite extends AbstractContext
     /**
      * {@inheritDoc}
      */
-    public function execute($skip = false)
+    public function setUp()
     {
         if ($this->getParent() !== null) {
             $this->scope = clone $this->getParent()->getScope();

@@ -10,8 +10,25 @@ describe('Spec', function() {
         m::close();
     });
 
-    describe('execute()', function() {
-        it('should execute hooks and body, bound to clone of parent scope', function() {
+    describe('setUp()', function() {
+        it('should add the spec to the runner', function() {
+            $specRunner = m::mock('Tusk\SpecRunner');
+
+            $spec = new Spec(
+                'ignore',
+                function() {},
+                m::mock('Tusk\AbstractContext'),
+                $specRunner
+            );
+
+            $specRunner->shouldReceive('add')->with($spec)->once();
+
+            $spec->setUp();
+        });
+    });
+
+    describe('run()', function() {
+        it('should run hooks and body, bound to clone of parent scope', function() {
             $parentScope = new \stdClass();
             $parentScope->a = 1;
 
@@ -77,100 +94,10 @@ describe('Spec', function() {
                 'ignore',
                 $body,
                 $parent,
-                m::mock('Tusk\Scoreboard', ['pass' => null])
+                m::mock('Tusk\SpecRunner')
             );
 
-            $spec->execute();
-        });
-
-        describe('scoring', function() {
-            beforeEach(function() {
-                $this->scoreboard = m::mock('Tusk\Scoreboard');
-
-                $this->parent = m::mock('Tusk\Suite', [
-                    'getDescription' => 'spec',
-                    'getScope' => new \stdClass(),
-                    'executePreHooks' => null,
-                    'executePostHooks' => null
-                ]);
-
-                $this->exception = null;
-
-                $exception = &$this->exception;
-
-                $body = function() use (&$exception) {
-                    if ($exception !== null) {
-                        throw $exception;
-                    }
-                };
-
-                $this->spec = new Spec(
-                    'description',
-                    $body,
-                    $this->parent,
-                    $this->scoreboard
-                );
-            });
-
-            it('should pass the spec if no exceptions are thrown', function() {
-                $this->scoreboard
-                    ->shouldReceive('pass')
-                    ->once()
-                ;
-
-                $this->spec->execute();
-            });
-
-            it('should fail the spec if body throws an exception', function() {
-                $this->exception = new \Exception('body broke');
-
-                $this->scoreboard
-                    ->shouldReceive('fail')
-                    ->with('spec description', 'body broke')
-                    ->once()
-                ;
-
-                $this->spec->execute();
-            });
-
-            it('should fail the spec if pre-hook throws an exception', function() {
-                $this->parent
-                    ->shouldReceive('executePreHooks')
-                    ->andThrow(new \Exception('pre-hook broke'))
-                ;
-
-                $this->scoreboard
-                    ->shouldReceive('fail')
-                    ->with('spec description', 'pre-hook broke')
-                    ->once()
-                ;
-
-                $this->spec->execute();
-            });
-
-            it('should fail the spec if post-hook throws an exception', function() {
-                $this->parent
-                    ->shouldReceive('executePostHooks')
-                    ->andThrow(new \Exception('post-hook broke'))
-                ;
-
-                $this->scoreboard
-                    ->shouldReceive('fail')
-                    ->with('spec description', 'post-hook broke')
-                    ->once()
-                ;
-
-                $this->spec->execute();
-            });
-
-            it('should mark the spec as skipped if the skip flag is set on the contextStackironment', function() {
-                $this->scoreboard
-                    ->shouldReceive('skip')
-                    ->once()
-                ;
-
-                $this->spec->execute(true);
-            });
+            $spec->run();
         });
     });
 });

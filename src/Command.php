@@ -18,9 +18,10 @@ class Command extends BaseCommand
     /**
      * @param Scoreboard $scoreboard
      */
-    public function __construct(Scoreboard $scoreboard)
+    public function __construct(SpecRunner $specRunner, Scoreboard $scoreboard)
     {
         parent::__construct();
+        $this->specRunner = $specRunner;
         $this->scoreboard = $scoreboard;
     }
 
@@ -48,6 +49,8 @@ class Command extends BaseCommand
         foreach ($input->getArgument('files') as $file) {
             require($file);
         }
+
+        $this->specRunner->run();
 
         $output->writeln('');
 

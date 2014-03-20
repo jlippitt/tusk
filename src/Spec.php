@@ -13,46 +13,48 @@ class Spec extends AbstractContext
 
     private $scoreboard;
 
+    private $specRunner;
+
     /**
      * @param string $description
      * @param \Closure $body
      * @param AbstractContext $parent
-     * @param Scoreboard $scoreboard
+     * @param bool $skip
+     * @param SpecRunner $specRunner
      */
     public function __construct(
         $description,
         \Closure $body,
         AbstractContext $parent,
-        Scoreboard $scoreboard
+        SpecRunner $specRunner,
+        $skip = false
     ) {
-        parent::__construct($description, $parent);
+        parent::__construct($description, $parent, $skip);
         $this->body = $body;
-        $this->scoreboard = $scoreboard;
+        $this->specRunner = $specRunner;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function execute($skip = false)
+    public function setUp()
     {
-        if ($skip) {
-            $this->scoreboard->skip();
+        $this->specRunner->add($this);
+    }
 
-        } else {
-            $scope = clone $this->getParent()->getScope();
+    /**
+     * Runs the spec
+     *
+     * @throw \Exception If the spec fails or there is an error
+     */
+    public function run()
+    {
+        $scope = clone $this->getParent()->getScope();
 
-            try {
-                $this->getParent()->executePreHooks($scope);
+        $this->getParent()->executePreHooks($scope);
 
-                $this->body->bindTo($scope, $scope)->__invoke();
+        $this->body->bindTo($scope, $scope)->__invoke();
 
-                $this->getParent()->executePostHooks($scope);
-
-                $this->scoreboard->pass();
-
-            } catch (\Exception $e) {
-                $this->scoreboard->fail($this->getDescription(), $e->getMessage());
-            }
-        }
+        $this->getParent()->executePostHooks($scope);
     }
 }

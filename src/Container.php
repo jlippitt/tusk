@@ -41,7 +41,7 @@ class Container extends Pimple
         };
 
         $this['Command'] = function($c) {
-            return new Command($c['Scoreboard']);
+            return new Command($c['SpecRunner'], $c['Scoreboard']);
         };
 
         $this['ConsoleOutput'] = function() {
@@ -50,6 +50,10 @@ class Container extends Pimple
 
         $this['ContextStack'] = function() {
             return new ContextStack();
+        };
+
+        $this['SpecRunner'] = function($c) {
+            return new SpecRunner($c['Scoreboard']);
         };
 
         $this['Scoreboard'] = function($c) {
@@ -232,18 +236,19 @@ class Container extends Pimple
         };
 
         $this['Suite'] = function ($c) {
-            return function($description, $body, $parent = null) use ($c) {
-                return new Suite($description, $body, $parent);
+            return function($description, $body, $parent = null, $skip = false) use ($c) {
+                return new Suite($description, $body, $parent, $skip);
             };
         };
 
         $this['Spec'] = function($c) {
-            return function($description, $body, $parent) use ($c) {
+            return function($description, $body, $parent, $skip = false) use ($c) {
                 return new Spec(
                     $description,
                     $body,
                     $parent,
-                    $c['Scoreboard']
+                    $c['SpecRunner'],
+                    $skip
                 );
             };
         };

@@ -6,33 +6,59 @@ require_once(__DIR__ . '/../vendor/autoload.php');
 function describe($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $specRunner = $container['ContextStack'];
-    $specRunner->execute($container['Suite']($description, $body, $specRunner->getContext()));
+    $contextStack = $container['ContextStack'];
+
+    $contextStack->execute(
+        $container['Suite'](
+            $description,
+            $body,
+            $contextStack->getContext()
+        )
+    );
 }
 
 function xdescribe($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
+    $contextStack = $container['ContextStack'];
 
-    $container['ContextStack']->skip(function() use ($description, $body) {
-        describe($description, $body);
-    });
+    $contextStack->execute(
+        $container['Suite'](
+            $description,
+            $body,
+            $contextStack->getContext(),
+            true
+        )
+    );
 }
 
 function it($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
-    $specRunner = $container['ContextStack'];
-    $specRunner->execute($container['Spec']($description, $body, $specRunner->getContext()));
+    $contextStack = $container['ContextStack'];
+
+    $contextStack->execute(
+        $container['Spec'](
+            $description,
+            $body,
+            $contextStack->getContext()
+        )
+    );
 }
 
 function xit($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
+    $contextStack = $container['ContextStack'];
 
-    $container['ContextStack']->skip(function() use ($description, $body) {
-        it($description, $body);
-    });
+    $contextStack->execute(
+        $container['Spec'](
+            $description,
+            $body,
+            $contextStack->getContext(),
+            true
+        )
+    );
 }
 
 function expect($value)

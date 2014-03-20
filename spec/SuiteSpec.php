@@ -107,7 +107,7 @@ describe('Suite', function() {
             };
 
             $suite = new Suite('ignore', $body, $parent);
-            $suite->execute();
+            $suite->setUp();
 
             expect($bodyCalled)->toBe(true);
 
@@ -126,7 +126,7 @@ describe('Suite', function() {
             };
 
             $suite = new Suite('ignore', $body);
-            $suite->execute();
+            $suite->setUp();
 
             expect($bodyCalled)->toBe(true);
 

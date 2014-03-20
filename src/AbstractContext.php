@@ -13,14 +13,18 @@ abstract class AbstractContext
 
     private $parent;
 
+    private $skip;
+
     /**
      * @param string $description
      * @param AbstractContext|null $parent
+     * @param bool $skip
      */
-    public function __construct($description, AbstractContext $parent = null)
+    public function __construct($description, AbstractContext $parent = null, $skip = false)
     {
         $this->description = $description;
         $this->parent = $parent;
+        $this->skip = $skip;
     }
 
     /**
@@ -42,12 +46,22 @@ abstract class AbstractContext
     }
 
     /**
-     * Runs the body of the context
+     * Returns true if the suite/spec should be skipped
      *
-     * @param bool $skip If true, the context is being skipped and may behave
-     * differently
+     * @return bool
      */
-    public abstract function execute($skip = false);
+    public function isSkipped()
+    {
+        return ($this->parent !== null && $this->parent->isSkipped())
+            || $this->skip;
+    }
+
+    /**
+     * Performs initial set up work for the context
+     *
+     * @throw \Exception If there is an error setting up the context
+     */
+    public abstract function setUp();
 
     /**
      * Returns the parent context, as passed to the constructor
