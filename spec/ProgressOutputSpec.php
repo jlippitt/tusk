@@ -52,4 +52,18 @@ describe('ProgressOutput', function() {
             $this->progressOutput->skip();
         });
     });
+
+    describe('done()', function() {
+        it('should display statistics after the final line', function() {
+            $this->progressOutput->setTotalSpecs(120);
+
+            $this->output
+                ->shouldReceive('writeln')
+                ->with(" 120/120\n")
+                ->once()
+            ;
+
+            $this->progressOutput->done();
+        });
+    });
 });

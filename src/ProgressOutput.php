@@ -11,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProgressOutput
 {
+    const LINE_LENGTH = 80;
+
     private $totalSpecs;
 
     /**
@@ -54,5 +56,13 @@ class ProgressOutput
     public function skip()
     {
         $this->output->write('<comment>S</comment>');
+    }
+
+    /**
+     * Called when all tests have completed. Displays final stats.
+     */
+    public function done()
+    {
+        $this->output->writeln(" {$this->totalSpecs}/{$this->totalSpecs}\n");
     }
 }

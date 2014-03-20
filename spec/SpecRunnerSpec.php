@@ -21,10 +21,9 @@ describe('SpecRunner', function() {
                 $this->specRunner->add($spec);
             }
 
-            $this->progressOutput->shouldReceive('setTotalSpecs')->with(3)->once();
-            $this->progressOutput->shouldReceive('pass')->times(3);
-            $this->progressOutput->shouldReceive('fail')->never();
-            $this->progressOutput->shouldReceive('skip')->never();
+            $this->progressOutput->shouldReceive('setTotalSpecs')->with(3)->once()->ordered();
+            $this->progressOutput->shouldReceive('pass')->times(3)->ordered();
+            $this->progressOutput->shouldReceive('done')->once()->ordered();
 
             $this->specRunner->run();
 
@@ -34,36 +33,33 @@ describe('SpecRunner', function() {
         });
 
         it('should catch exceptions and fail the spec when they occur', function() {
-            for ($i = 0; $i < 3; ++$i) {
-                if ($i === 1) {
-                    $spec = m::mock('Tusk\Spec', [
-                        'getDescription' => 'failing spec',
-                        'isSkipped' => false
-                    ]);
+            $spec = m::mock('Tusk\Spec', [
+                'getDescription' => 'failing spec',
+                'isSkipped' => false
+            ]);
 
-                    $spec
-                        ->shouldReceive('run')
-                        ->once()
-                        ->andThrow(new \Exception('error'))
-                    ;
+            $spec
+                ->shouldReceive('run')
+                ->once()
+                ->andThrow(new \Exception('error'))
+            ;
 
-                } else {
-                    $spec = m::mock('Tusk\Spec', [
-                        'getDescription' => 'passing spec',
-                        'isSkipped' => false
-                    ]);
+            $this->specRunner->add($spec);
 
-                    $spec = m::mock('Tusk\Spec', ['isSkipped' => false]);
-                    $spec->shouldReceive('run')->once();
-                }
+            $spec = m::mock('Tusk\Spec', [
+                'getDescription' => 'passing spec',
+                'isSkipped' => false
+            ]);
 
-                $this->specRunner->add($spec);
-            }
+            $spec = m::mock('Tusk\Spec', ['isSkipped' => false]);
+            $spec->shouldReceive('run')->once();
 
-            $this->progressOutput->shouldReceive('setTotalSpecs')->with(3)->once();
-            $this->progressOutput->shouldReceive('pass')->twice();
-            $this->progressOutput->shouldReceive('fail')->once();
-            $this->progressOutput->shouldReceive('skip')->never();
+            $this->specRunner->add($spec);
+
+            $this->progressOutput->shouldReceive('setTotalSpecs')->with(2)->once()->ordered();
+            $this->progressOutput->shouldReceive('fail')->once()->ordered();
+            $this->progressOutput->shouldReceive('pass')->once()->ordered();
+            $this->progressOutput->shouldReceive('done')->once()->ordered();
 
             $this->specRunner->run();
 
@@ -73,23 +69,20 @@ describe('SpecRunner', function() {
         });
 
         it('should not run any specs where "isSkipped" returns true', function() {
-            for ($i = 0; $i < 3; ++$i) {
-                if ($i === 1) {
-                    $spec = m::mock('Tusk\Spec', ['isSkipped' => true]);
-                    $spec->shouldReceive('run')->never();
+            $spec = m::mock('Tusk\Spec', ['isSkipped' => true]);
+            $spec->shouldReceive('run')->never();
 
-                } else {
-                    $spec = m::mock('Tusk\Spec', ['isSkipped' => false]);
-                    $spec->shouldReceive('run')->once();
-                }
+            $this->specRunner->add($spec);
 
-                $this->specRunner->add($spec);
-            }
+            $spec = m::mock('Tusk\Spec', ['isSkipped' => false]);
+            $spec->shouldReceive('run')->once();
 
-            $this->progressOutput->shouldReceive('setTotalSpecs')->with(3)->once();
-            $this->progressOutput->shouldReceive('pass')->twice();
-            $this->progressOutput->shouldReceive('fail')->never();
-            $this->progressOutput->shouldReceive('skip')->once();
+            $this->specRunner->add($spec);
+
+            $this->progressOutput->shouldReceive('setTotalSpecs')->with(2)->once()->ordered();
+            $this->progressOutput->shouldReceive('skip')->once()->ordered();
+            $this->progressOutput->shouldReceive('pass')->once()->ordered();
+            $this->progressOutput->shouldReceive('done')->once()->ordered();
 
             $this->specRunner->run();
 

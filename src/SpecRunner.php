@@ -47,6 +47,8 @@ class SpecRunner
                 $this->progressOutput->fail();
             }
         }
+
+        $this->progressOutput->done();
     }
 
     /**

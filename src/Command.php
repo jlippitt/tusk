@@ -53,10 +53,8 @@ class Command extends BaseCommand
 
         $this->specRunner->run();
 
-        $output->writeln('');
-
         foreach ($this->specRunner->getFailedSpecs() as $spec => $reason) {
-            $output->writeln("\n<error>Spec '{$spec}' failed: {$reason}</error>");
+            $output->writeln("<error>Spec '{$spec}' failed: {$reason}</error>\n");
         }
 
         $failCount = $this->specRunner->getFailCount();
@@ -75,6 +73,6 @@ class Command extends BaseCommand
             $result = "<info>{$result}</info>";
         }
 
-        $output->writeln("\n{$result}\n");
+        $output->writeln("{$result}\n");
     }
 }
