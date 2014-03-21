@@ -48,7 +48,7 @@ class Command extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach ($input->getArgument('files') as $file) {
-            require($file);
+            $this->loadSpecs($file);
         }
 
         $this->specRunner->run();
@@ -74,5 +74,18 @@ class Command extends BaseCommand
         }
 
         $output->writeln("{$result}\n");
+    }
+
+    private function loadSpecs($file)
+    {
+        if (is_dir($file)) {
+            foreach (scandir($file) as $spec) {
+                if ($spec[0] !== '.') {
+                    $this->loadSpecs($file . '/' . $spec);
+                }
+            }
+        } else {
+            require($file);
+        }
     }
 }
