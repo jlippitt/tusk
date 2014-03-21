@@ -43,7 +43,7 @@ class SpecRunner
                 $this->progressOutput->pass();
 
             } catch (\Exception $e) {
-                $this->failed[$spec->getDescription()] = $e->getMessage();
+                $this->failed[$spec->getDescription()] = $e;
                 $this->progressOutput->fail();
             }
         }

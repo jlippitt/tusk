@@ -53,8 +53,9 @@ class Command extends BaseCommand
 
         $this->specRunner->run();
 
-        foreach ($this->specRunner->getFailedSpecs() as $spec => $reason) {
-            $output->writeln("<error>Spec '{$spec}' failed: {$reason}</error>\n");
+        foreach ($this->specRunner->getFailedSpecs() as $spec => $exception) {
+            $output->writeln("<error>Spec '{$spec}' failed: {$exception->getMessage()}</error>\n");
+            $output->writeln("{$exception->getTraceAsString()}\n");
         }
 
         $failCount = $this->specRunner->getFailCount();

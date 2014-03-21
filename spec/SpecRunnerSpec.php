@@ -38,10 +38,12 @@ describe('SpecRunner', function() {
                 'isSkipped' => false
             ]);
 
+            $exception = new \Exception('error');
+
             $spec
                 ->shouldReceive('run')
                 ->once()
-                ->andThrow(new \Exception('error'))
+                ->andThrow($exception)
             ;
 
             $this->specRunner->add($spec);
@@ -64,7 +66,7 @@ describe('SpecRunner', function() {
             $this->specRunner->run();
 
             expect($this->specRunner->getFailCount())->toBe(1);
-            expect($this->specRunner->getFailedSpecs())->toBe(['failing spec' => 'error']);
+            expect($this->specRunner->getFailedSpecs())->toBe(['failing spec' => $exception]);
             expect($this->specRunner->getSkipCount())->toBe(0);
         });
 
