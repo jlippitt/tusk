@@ -111,8 +111,6 @@ Expectations provide a number of built-in *matchers*:
 
 * **toBeFalsy()** Tests that the value is 'falsy' according to [boolean conversion rules](http://www.php.net/manual/en/language.types.boolean.php)
 
-* **toBeFalsy()** Tests that the value is 'falsy' according to [boolean conversion rules](http://www.php.net/manual/en/language.types.boolean.php)
-
 * **toContain(expectedValue)** Tests that an array contains a given value. This uses the internal [in\_array](http://www.php.net/manual/en/function.in-array.php) function.
 
 * **toMatch(regex)** Tests that a string value matches the given regular expression. See [preg\_match](http://www.php.net/manual/en/function.preg-match.php).
