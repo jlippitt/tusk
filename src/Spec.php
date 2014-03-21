@@ -53,8 +53,26 @@ class Spec extends AbstractContext
 
         $this->getParent()->executePreHooks($scope);
 
-        $this->body->bindTo($scope, $scope)->__invoke();
+        // We catch any exception and re-throw it later, as we still need to
+        // run tear-down logic even if something breaks in the spec body
+        try {
+            $this->body->bindTo($scope, $scope)->__invoke();
 
-        $this->getParent()->executePostHooks($scope);
+        } catch (\Exception $bodyError) {}
+
+        try {
+            $this->getParent()->executePostHooks($scope);
+
+        } catch (\Exception $postHookError) {
+            // If both the spec body and a post-hook threw an exception, we
+            // re-throw the exception from the body in preference
+            if (!isset($bodyError)) {
+                throw $postHookError;
+            }
+        }
+
+        if (isset($bodyError)) {
+            throw $bodyError;
+        }
     }
 }

@@ -99,5 +99,153 @@ describe('Spec', function() {
 
             $spec->run();
         });
+
+        it('should throw an exception if body fails', function() {
+            $parent = m::mock(
+                'Tusk\Suite',
+                [
+                    'getScope' => new \stdClass(),
+                    'executePreHooks' => null,
+                    'executePostHooks' => null
+                ]
+            );
+
+            $spec = new Spec(
+                'ignore',
+                function() { throw new \Exception('body error'); },
+                $parent,
+                m::mock('Tusk\SpecRunner')
+            );
+
+            expect(function() use ($spec) { $spec->run(); })->toThrow(
+                'Exception',
+                'body error'
+            );
+        });
+
+        it('should throw an exception if pre-hook fails', function() {
+            $parent = m::mock(
+                'Tusk\Suite',
+                [
+                    'getScope' => new \stdClass(),
+                    'executePostHooks' => null
+                ]
+            );
+
+            $parent->shouldReceive('executePreHooks')->andThrow(
+                new \Exception('pre-hook error')
+            );
+
+            $spec = new Spec(
+                'ignore',
+                function() {},
+                $parent,
+                m::mock('Tusk\SpecRunner')
+            );
+
+            expect(function() use ($spec) { $spec->run(); })->toThrow(
+                'Exception',
+                'pre-hook error'
+            );
+        });
+
+        it('should throw an exception if post-hook fails', function() {
+            $parent = m::mock(
+                'Tusk\Suite',
+                [
+                    'getScope' => new \stdClass(),
+                    'executePreHooks' => null
+                ]
+            );
+
+            $parent->shouldReceive('executePostHooks')->andThrow(
+                new \Exception('post-hook error')
+            );
+
+            $spec = new Spec(
+                'ignore',
+                function() {},
+                $parent,
+                m::mock('Tusk\SpecRunner')
+            );
+
+            expect(function() use ($spec) { $spec->run(); })->toThrow(
+                'Exception',
+                'post-hook error'
+            );
+        });
+
+        it('should attempt to execute post-hooks even if an exception is thrown by the body', function() {
+            $parent = m::mock(
+                'Tusk\Suite',
+                ['getScope' => new \stdClass(), 'executePreHooks' => null]
+            );
+
+            $parent->shouldReceive('executePostHooks')->once();
+
+            $spec = new Spec(
+                'ignore',
+                function() { throw new \Exception('body error'); },
+                $parent,
+                m::mock('Tusk\SpecRunner')
+            );
+
+            expect(function() use ($spec) { $spec->run(); })->toThrow(
+                'Exception',
+                'body error'
+            );
+        });
+
+        it('should not attempt to execute the body or post-hooks if an exception is thrown by a pre-hook', function() {
+            $parent = m::mock(
+                'Tusk\Suite',
+                ['getScope' => new \stdClass()]
+            );
+
+            $parent->shouldReceive('executePreHooks')->andThrow(
+                new \Exception('pre-hook error')
+            );
+
+            $parent->shouldReceive('executePostHooks')->never();
+
+            $bodyCalled = false;
+
+            $spec = new Spec(
+                'ignore',
+                function() use (&$bodyCalled) { $bodyCalled = true; },
+                $parent,
+                m::mock('Tusk\SpecRunner')
+            );
+
+            expect(function() use ($spec) { $spec->run(); })->toThrow(
+                'Exception',
+                'pre-hook error'
+            );
+
+            expect($bodyCalled)->toBe(false);
+        });
+
+        it('should throw the exception from the body if a post-hook throws an exception as well', function() {
+            $parent = m::mock(
+                'Tusk\Suite',
+                ['getScope' => new \stdClass(), 'executePreHooks' => null]
+            );
+
+            $parent->shouldReceive('executePostHooks')->andThrow(
+                new \Exception('post-hook error')
+            );
+
+            $spec = new Spec(
+                'ignore',
+                function() { throw new \Exception('body error'); },
+                $parent,
+                m::mock('Tusk\SpecRunner')
+            );
+
+            expect(function() use ($spec) { $spec->run(); })->toThrow(
+                'Exception',
+                'body error'
+            );
+        });
     });
 });
