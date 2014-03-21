@@ -1,5 +1,18 @@
 {
     "name": "jlippitt/tusk",
+    "type": "library",
+    "description": "A PHP testing framework for elephants",
+    "keywords": ["test", "testing", "tdd", "bdd", "jasmine", "rspec"],
+    "homepage": "https://github.com/jlippitt/tusk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Lippitt",
+            "email": "james.lippitt@gmail.com",
+            "homepage": "http://jameslippitt.co.uk",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": ">=5.4.0",
         "pimple/pimple": "~2.0",
