@@ -26,5 +26,5 @@
             "Tusk\\": "src/"
         }
     },
-    'bin': ["bin/tusk"]
+    "bin": ["bin/tusk"]
 }
