@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once(__DIR__ . '/../vendor/autoload.php');
+(@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
 
 function describe($description, \Closure $body)
 {
