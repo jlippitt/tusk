@@ -75,6 +75,8 @@ class Command extends BaseCommand
         }
 
         $output->writeln("{$result}\n");
+
+        return $failCount > 0 ? 1 : 0;
     }
 
     private function loadSpecs($file)
