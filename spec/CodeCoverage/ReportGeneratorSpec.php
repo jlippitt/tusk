@@ -22,7 +22,7 @@ describe('ReportGenerator', function() {
         m::close();
     });
 
-    describe('generateReport', function() {
+    describe('generateReport()', function() {
         it('should output report files', function() {
             $results = ['/foo/bar' => ['a'], '/baz/qux' => ['b']];
 

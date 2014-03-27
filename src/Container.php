@@ -259,7 +259,8 @@ class Container extends Pimple
 
         $this['CodeCoverage\Analyzer'] = function ($c) {
             return new CodeCoverage\Analyzer(
-                $c['Util\FileScanner']
+                $c['Util\FileScanner'],
+                $c['Util\GlobalFunctionInvoker']
             );
         };
 
