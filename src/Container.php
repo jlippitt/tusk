@@ -266,6 +266,12 @@ class Container extends Pimple
         $this['CodeCoverage\CodeCoverage'] = function ($c) {
             return new CodeCoverage\CodeCoverage(
                 $c['CodeCoverage\Analyzer'],
+                $c['CodeCoverage\ReportGenerator']
+            );
+        };
+
+        $this['CodeCoverage\ReportGenerator'] = function ($c) {
+            return new CodeCoverage\ReportGenerator(
                 $c['CodeCoverage\Output\Html']
             );
         };

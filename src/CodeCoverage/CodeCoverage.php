@@ -14,14 +14,14 @@ class CodeCoverage
 {
     private $analyzer;
 
-    private $output;
+    private $reportGenerator;
 
     public function __construct(
         Analyzer $analyzer,
-        OutputInterface $output
+        ReportGenerator $reportGenerator
     ) {
         $this->analyzer = $analyzer;
-        $this->output = $output;
+        $this->reportGenerator = $reportGenerator;
     }
 
     public function begin(array $dirs, callable $body)
@@ -40,28 +40,9 @@ class CodeCoverage
 
         $results = $this->analyzer->analyze($dirs, $results);
 
-        $outputDir = './code_coverage';
-
-        if (!is_dir($outputDir)) {
-            mkdir($outputDir, 0777, true);
-        }
-
-        file_put_contents(
-            "{$outputDir}/summary.{$this->output->getExtension()}",
-            $this->output->getSummaryOutput($results)
+        $this->reportGenerator->generateReport(
+            $results,
+            './code_coverage'
         );
-
-        foreach ($results as $file => $result) {
-            $fileDir = $outputDir . dirname($file);
-
-            if (!is_dir($fileDir)) {
-                mkdir($fileDir, 0777, true);
-            }
-
-            file_put_contents(
-                "{$fileDir}/" . basename($file) . ".{$this->output->getExtension()}",
-                $this->output->getFileOutput($file, $result)
-            );
-        }
     }
 }
