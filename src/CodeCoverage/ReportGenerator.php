@@ -3,12 +3,16 @@
 namespace Tusk\CodeCoverage;
 
 use Tusk\CodeCoverage\Output\OutputInterface;
+use Tusk\Util\GlobalFunctionInvoker;
 
 class ReportGenerator
 {
-    public function __construct(OutputInterface $output)
-    {
+    public function __construct(
+        OutputInterface $output,
+        GlobalFunctionInvoker $invoker
+    ) {
         $this->output = $output;
+        $this->invoker = $invoker;
     }
 
     public function generateReport(array $results, $outputDir)
@@ -28,12 +32,15 @@ class ReportGenerator
 
     private function writeFile($file, $data)
     {
-        $dir = dirname($file);
+        $dir = $this->invoker->dirname($file);
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+        if (!$this->invoker->is_dir($dir)) {
+            $this->invoker->mkdir($dir, 0777, true);
         }
 
-        file_put_contents("{$file}.{$this->output->getExtension()}", $data);
+        $this->invoker->file_put_contents(
+            "{$file}.{$this->output->getExtension()}",
+            $data
+        );
     }
 }

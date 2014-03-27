@@ -272,7 +272,8 @@ class Container extends Pimple
 
         $this['CodeCoverage\ReportGenerator'] = function ($c) {
             return new CodeCoverage\ReportGenerator(
-                $c['CodeCoverage\Output\Html']
+                $c['CodeCoverage\Output\Html'],
+                $c['Util\GlobalFunctionInvoker']
             );
         };
 
@@ -282,6 +283,10 @@ class Container extends Pimple
 
         $this['Util\FileScanner'] = function ($c) {
             return new Util\FileScanner();
+        };
+
+        $this['Util\GlobalFunctionInvoker'] = function ($c) {
+            return new Util\GlobalFunctionInvoker();
         };
     }
 }
