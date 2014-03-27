@@ -24,7 +24,7 @@ describe('ReportGenerator', function() {
 
     describe('generateReport()', function() {
         it('should output report files', function() {
-            $results = ['/foo/bar' => ['a'], '/baz/qux' => ['b']];
+            $results = ['files' => ['/foo/bar' => ['a'], '/baz/qux' => ['b']]];
 
             $summaryOutput = '/foo/bar,/baz/qux';
 

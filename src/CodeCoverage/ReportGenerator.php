@@ -22,7 +22,7 @@ class ReportGenerator
             $this->output->getSummaryOutput($results)
         );
 
-        foreach ($results as $file => $result) {
+        foreach ($results['files'] as $file => $result) {
             $this->writeFile(
                 $outputDir . $file,
                 $this->output->getFileOutput($file, $result)

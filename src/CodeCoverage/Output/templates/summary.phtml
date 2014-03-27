@@ -5,6 +5,16 @@
         <title>Code Coverage Summary</title>
     </head>
     <body>
+        <dl>
+            <dt>Total Lines<dt>
+            <dd><?php echo $results['stats']['totalLines'] ?></dd>
+            <dt>Executable Lines<dt>
+            <dd><?php echo $results['stats']['executableLines'] ?></dd>
+            <dt>Lines Executed<dt>
+            <dd><?php echo $results['stats']['linesExecuted'] ?></dd>
+            <dt>Coverage<dt>
+            <dd><?php echo number_format($results['stats']['coverage'] * 100, 1) ?>%</dd>
+        </dl>
         <table>
             <thead>
                 <tr>
@@ -12,7 +22,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach (array_keys($results) as $file): ?>
+                <?php foreach (array_keys($results['files']) as $file): ?>
                 <tr>
                     <td>
                         <a href=".<?php echo htmlspecialchars($file . '.html', ENT_QUOTES, 'UTF-8') ?>">
