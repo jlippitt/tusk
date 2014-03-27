@@ -41,7 +41,11 @@ class Container extends Pimple
         };
 
         $this['Command'] = function($c) {
-            return new Command($c['SpecRunner']);
+            return new Command(
+                $c['Util\FileScanner'],
+                $c['SpecRunner'],
+                $c['CodeCoverage\Analyzer']
+            );
         };
 
         $this['ConsoleOutput'] = function() {
@@ -251,6 +255,21 @@ class Container extends Pimple
                     $skip
                 );
             };
+        };
+
+        $this['CodeCoverage\Analyzer'] = function ($c) {
+            return new CodeCoverage\Analyzer(
+                $c['Util\FileScanner'],
+                $c['CodeCoverage\Output\Html']
+            );
+        };
+
+        $this['CodeCoverage\Output\Html'] = function ($c) {
+            return new CodeCoverage\Output\Html();
+        };
+
+        $this['Util\FileScanner'] = function ($c) {
+            return new Util\FileScanner();
         };
     }
 }
