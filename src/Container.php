@@ -44,7 +44,7 @@ class Container extends Pimple
             return new Command(
                 $c['Util\FileScanner'],
                 $c['SpecRunner'],
-                $c['CodeCoverage\Analyzer']
+                $c['CodeCoverage\CodeCoverage']
             );
         };
 
@@ -259,7 +259,13 @@ class Container extends Pimple
 
         $this['CodeCoverage\Analyzer'] = function ($c) {
             return new CodeCoverage\Analyzer(
-                $c['Util\FileScanner'],
+                $c['Util\FileScanner']
+            );
+        };
+
+        $this['CodeCoverage\CodeCoverage'] = function ($c) {
+            return new CodeCoverage\CodeCoverage(
+                $c['CodeCoverage\Analyzer'],
                 $c['CodeCoverage\Output\Html']
             );
         };

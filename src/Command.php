@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tusk\CodeCoverage\Analyzer;
+use Tusk\CodeCoverage\CodeCoverage;
 use Tusk\Util\FileScanner;
 
 /**
@@ -22,7 +22,7 @@ class Command extends BaseCommand
 
     private $specRunner;
 
-    private $analyzer;
+    private $codeCoverage;
 
     /**
      * @param Scoreboard $scoreboard
@@ -30,12 +30,12 @@ class Command extends BaseCommand
     public function __construct(
         FileScanner $fileScanner,
         SpecRunner $specRunner,
-        Analyzer $analyzer
+        CodeCoverage $codeCoverage
     ) {
         parent::__construct();
         $this->fileScanner = $fileScanner;
         $this->specRunner = $specRunner;
-        $this->analyzer = $analyzer;
+        $this->codeCoverage = $codeCoverage;
     }
 
     /**
@@ -70,7 +70,7 @@ class Command extends BaseCommand
         }
 
         if ($input->getOption('code-coverage-include')) {
-            $this->analyzer->analyze(
+            $this->codeCoverage->begin(
                 $input->getOption('code-coverage-include'),
                 [$this->specRunner, 'run']
             );
