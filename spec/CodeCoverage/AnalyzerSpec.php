@@ -20,7 +20,7 @@ describe('Analyzer', function() {
         it('should return line by line code and coverage details for each file', function() {
             $dirs = ['src', 'more_src'];
 
-            $files = ['a', 'c'];
+            $files = ['a', 'c', 'd'];
 
             $coverage = [
                 'a' => [1 => 1, 3 => -1],
