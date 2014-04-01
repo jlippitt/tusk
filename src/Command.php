@@ -52,10 +52,10 @@ class Command extends BaseCommand
                 'Path(s) to spec file(s)'
             )
             ->addOption(
-                'code-coverage-include',
+                'code-coverage',
                 null,
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'Enables code coverage'
+                'Enables code coverage for the specified paths'
             )
         ;
     }
@@ -69,9 +69,9 @@ class Command extends BaseCommand
             require($file);
         }
 
-        if ($input->getOption('code-coverage-include')) {
+        if ($input->getOption('code-coverage')) {
             $this->codeCoverage->begin(
-                $input->getOption('code-coverage-include'),
+                $input->getOption('code-coverage'),
                 [$this->specRunner, 'run']
             );
 
