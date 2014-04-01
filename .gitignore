@@ -1,2 +1,3 @@
+code_coverage/
 vendor/
 *.sw*
