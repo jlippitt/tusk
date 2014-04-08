@@ -48,14 +48,8 @@ class Command extends BaseCommand
             ->setDescription('Run specs')
             ->addArgument(
                 'files',
-                InputArgument::IS_ARRAY | InputArgument::REQUIRED,
+                InputArgument::IS_ARRAY,
                 'Path(s) to spec file(s)'
-            )
-            ->addOption(
-                'code-coverage',
-                null,
-                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-                'Enables code coverage for the specified paths'
             )
         ;
     }
@@ -65,13 +59,28 @@ class Command extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        foreach ($this->fileScanner->find($input->getArgument('files'), 'Spec.php') as $file) {
+        if (is_file('./tusk.json')) {
+            $options = @json_decode(file_get_contents('./tusk.json'));
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception(json_last_error_msg());
+            }
+
+        } else {
+            $options = array();
+        }
+
+        if (!empty($input->getArgument('files'))) {
+            $options->paths = $input->getArgument('files');
+        }
+
+        foreach ($this->fileScanner->find($options->paths, 'Spec.php') as $file) {
             require($file);
         }
 
-        if ($input->getOption('code-coverage')) {
+        if (isset($options->codeCoverage)) {
             $this->codeCoverage->begin(
-                $input->getOption('code-coverage'),
+                $options->codeCoverage->sourcePaths,
                 [$this->specRunner, 'run']
             );
 

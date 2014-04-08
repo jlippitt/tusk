@@ -1,0 +1,6 @@
+{
+    "paths": ["./spec"],
+    "codeCoverage": {
+        "sourcePaths": ["./src"]
+    }
+}
