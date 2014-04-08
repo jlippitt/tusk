@@ -80,7 +80,7 @@ class Command extends BaseCommand
 
         if (isset($options->codeCoverage)) {
             $this->codeCoverage->begin(
-                $options->codeCoverage->sourcePaths,
+                $options->codeCoverage,
                 [$this->specRunner, 'run']
             );
 

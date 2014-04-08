@@ -1,6 +1,7 @@
 {
     "paths": ["./spec"],
     "codeCoverage": {
-        "sourcePaths": ["./src"]
+        "sourcePaths": ["./src"],
+        "outputDirectory": "./code_coverage"
     }
 }

@@ -24,7 +24,7 @@ class CodeCoverage
         $this->reportGenerator = $reportGenerator;
     }
 
-    public function begin(array $dirs, callable $body)
+    public function begin(\stdClass $config, callable $body)
     {
         if (!ini_get('xdebug.coverage_enable')) {
             throw new \RuntimeException('Xdebug code coverage is not enabled');
@@ -38,11 +38,11 @@ class CodeCoverage
 
         xdebug_stop_code_coverage();
 
-        $results = $this->analyzer->analyze($dirs, $results);
+        $results = $this->analyzer->analyze($config->sourcePaths, $results);
 
         $this->reportGenerator->generateReport(
             $results,
-            './code_coverage'
+            $config->outputDirectory
         );
     }
 }
