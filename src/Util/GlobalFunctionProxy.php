@@ -9,7 +9,7 @@ namespace Tusk\Util;
  *
  * @author James Lippitt
  */
-class GlobalFunctionInvoker
+class GlobalFunctionProxy
 {
     public function __call($method, array $args)
     {

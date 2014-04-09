@@ -3,7 +3,7 @@
 namespace Tusk\CodeCoverage;
 
 use Tusk\Util\FileScanner;
-use Tusk\Util\GlobalFunctionInvoker;
+use Tusk\Util\GlobalFunctionProxy;
 
 class Analyzer
 {
@@ -14,14 +14,14 @@ class Analyzer
 
     private $fileScanner;
 
-    private $invoker;
+    private $proxy;
 
     public function __construct(
         FileScanner $fileScanner,
-        GlobalFunctionInvoker $invoker
+        GlobalFunctionProxy $proxy
     ) {
         $this->fileScanner = $fileScanner;
-        $this->invoker = $invoker;
+        $this->invoker = $proxy;
     }
 
     public function analyze(array $dirs, array $coverage)

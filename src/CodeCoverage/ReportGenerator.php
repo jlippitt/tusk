@@ -3,16 +3,16 @@
 namespace Tusk\CodeCoverage;
 
 use Tusk\CodeCoverage\Output\OutputInterface;
-use Tusk\Util\GlobalFunctionInvoker;
+use Tusk\Util\GlobalFunctionProxy;
 
 class ReportGenerator
 {
     public function __construct(
         OutputInterface $output,
-        GlobalFunctionInvoker $invoker
+        GlobalFunctionProxy $proxy
     ) {
         $this->output = $output;
-        $this->invoker = $invoker;
+        $this->invoker = $proxy;
     }
 
     public function generateReport(array $results, $outputDir)

@@ -7,7 +7,7 @@ describe('Analyzer', function() {
     beforeEach(function() {
         $this->fileScanner = m::mock('Tusk\Util\FileScanner');
 
-        $this->invoker = m::mock('Tusk\Util\GlobalFunctionInvoker');
+        $this->invoker = m::mock('Tusk\Util\GlobalFunctionProxy');
 
         $this->analyzer = new Analyzer($this->fileScanner, $this->invoker);
     });

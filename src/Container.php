@@ -260,7 +260,7 @@ class Container extends Pimple
         $this['CodeCoverage\Analyzer'] = function ($c) {
             return new CodeCoverage\Analyzer(
                 $c['Util\FileScanner'],
-                $c['Util\GlobalFunctionInvoker']
+                $c['Util\GlobalFunctionProxy']
             );
         };
 
@@ -274,7 +274,7 @@ class Container extends Pimple
         $this['CodeCoverage\ReportGenerator'] = function ($c) {
             return new CodeCoverage\ReportGenerator(
                 $c['CodeCoverage\Output\Html'],
-                $c['Util\GlobalFunctionInvoker']
+                $c['Util\GlobalFunctionProxy']
             );
         };
 
@@ -286,8 +286,8 @@ class Container extends Pimple
             return new Util\FileScanner();
         };
 
-        $this['Util\GlobalFunctionInvoker'] = function ($c) {
-            return new Util\GlobalFunctionInvoker();
+        $this['Util\GlobalFunctionProxy'] = function ($c) {
+            return new Util\GlobalFunctionProxy();
         };
     }
 }

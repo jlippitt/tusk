@@ -10,7 +10,7 @@ describe('ReportGenerator', function() {
             ['getExtension' => 'html']
         );
 
-        $this->invoker = m::mock('Tusk\Util\GlobalFunctionInvoker');
+        $this->invoker = m::mock('Tusk\Util\GlobalFunctionProxy');
 
         $this->reportGenerator = new ReportGenerator(
             $this->output,
