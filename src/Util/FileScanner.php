@@ -10,6 +10,13 @@ namespace Tusk\Util;
  */
 class FileScanner
 {
+    private $proxy;
+
+    public function __construct(GlobalFunctionProxy $proxy)
+    {
+        $this->proxy = $proxy;
+    }
+
     /**
      * Iterates through a list of directories, scanning them and their
      * subdirectories for any files whose names end with the specified string.
@@ -36,8 +43,8 @@ class FileScanner
     {
         $files = [];
 
-        if (is_dir($dir)) {
-            foreach (scandir($dir) as $file) {
+        if ($this->proxy->is_dir($dir)) {
+            foreach ($this->proxy->scandir($dir) as $file) {
                 if ($file[0] !== '.') {
                     $files = array_merge(
                         $files,
@@ -47,7 +54,7 @@ class FileScanner
             }
 
         } elseif (preg_match($ending, $dir)) {
-            $files[] = realpath($dir);
+            $files[] = $this->proxy->realpath($dir);
         }
 
         return $files;

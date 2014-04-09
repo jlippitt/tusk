@@ -283,7 +283,7 @@ class Container extends Pimple
         };
 
         $this['Util\FileScanner'] = function ($c) {
-            return new Util\FileScanner();
+            return new Util\FileScanner($c['Util\GlobalFunctionProxy']);
         };
 
         $this['Util\GlobalFunctionProxy'] = function ($c) {
