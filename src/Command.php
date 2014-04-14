@@ -74,6 +74,10 @@ class Command extends BaseCommand
             $options->paths = $input->getArgument('files');
         }
 
+        if (isset($options->bootstrap)) {
+            require($options->bootstrap);
+        }
+
         foreach ($this->fileScanner->find($options->paths, 'Spec.php') as $file) {
             require($file);
         }
