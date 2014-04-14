@@ -67,7 +67,7 @@ class Command extends BaseCommand
             }
 
         } else {
-            $options = array();
+            $options = new \stdClass();
         }
 
         if (!empty($input->getArgument('files'))) {
