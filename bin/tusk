@@ -37,6 +37,11 @@ function xdescribe($description, \Closure $body)
     );
 }
 
+function xcontext($description, \Closure $body)
+{
+    xdescribe($description, $body);
+}
+
 function it($description, \Closure $body)
 {
     $container = Tusk\Container::getInstance();
