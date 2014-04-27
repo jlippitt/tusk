@@ -2,7 +2,6 @@
 
 namespace Tusk\CodeCoverage;
 
-use Tusk\Util\FileScanner;
 use Tusk\Util\GlobalFunctionProxy;
 
 class Analyzer
@@ -12,19 +11,13 @@ class Analyzer
     const NOT_EXECUTED = -1;
     const NOT_EXECUTABLE = -2;
 
-    private $fileScanner;
-
     private $proxy;
 
-    public function __construct(
-        FileScanner $fileScanner,
-        GlobalFunctionProxy $proxy
-    ) {
-        $this->fileScanner = $fileScanner;
-        $this->invoker = $proxy;
+    public function __construct(GlobalFunctionProxy $proxy) {
+        $this->proxy = $proxy;
     }
 
-    public function analyze(array $dirs, array $coverage)
+    public function analyze(array $files, array $coverage)
     {
         $results = [
             'stats' => [
@@ -35,7 +28,7 @@ class Analyzer
             'files' => []
         ];
 
-        foreach ($this->fileScanner->find($dirs, '.php') as $file) {
+        foreach ($files as $file) {
             if (!isset($coverage[$file])) {
                 continue;
             }
@@ -49,7 +42,7 @@ class Analyzer
                 'lines' => []
             ];
 
-            foreach ($this->invoker->file($file) as $i => $line) {
+            foreach ($this->proxy->file($file) as $i => $line) {
                 $status = isset($coverage[$file][$i + 1]) ?
                     $coverage[$file][$i + 1] : self::NO_DATA;
 

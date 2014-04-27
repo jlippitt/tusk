@@ -5,11 +5,9 @@ use Tusk\CodeCoverage\Analyzer;
 
 describe('Analyzer', function() {
     beforeEach(function() {
-        $this->fileScanner = m::mock('Tusk\Util\FileScanner');
-
         $this->invoker = m::mock('Tusk\Util\GlobalFunctionProxy');
 
-        $this->analyzer = new Analyzer($this->fileScanner, $this->invoker);
+        $this->analyzer = new Analyzer($this->invoker);
     });
 
     afterEach(function() {
@@ -28,12 +26,6 @@ describe('Analyzer', function() {
                 'c' => [2 => 1, 4 => -2]
             ];
 
-            $this->fileScanner
-                ->shouldReceive('find')
-                ->with($dirs, '.php')
-                ->andReturn($files)
-            ;
-
             $this->invoker
                 ->shouldReceive('file')
                 ->with('a')
@@ -46,7 +38,7 @@ describe('Analyzer', function() {
                 ->andReturn(['this', 'is', 'code', 'coverage'])
             ;
 
-            expect($this->analyzer->analyze($dirs, $coverage))->toBe([
+            expect($this->analyzer->analyze($files, $coverage))->toBe([
                 'stats' => [
                     'totalLines' => 7,
                     'executableLines' => 3,
