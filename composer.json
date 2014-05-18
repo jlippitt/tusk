@@ -22,6 +22,10 @@
         "mockery/mockery": "~0.9",
         "phpunit/php-code-coverage": "~2.0"
     },
+    "suggest": {
+        "mockery/mockery": "Excellent PHP mocking library",
+        "phpunit/php-code-coverage": "Required for generating coverage reports"
+    },
     "autoload": {
         "psr-4": {
             "Tusk\\": "src/"
