@@ -4,12 +4,23 @@ namespace Tusk\CodeCoverage;
 
 use Tusk\Util\FileScanner;
 
+/**
+ * Conducts PHP_CodeCoverage reports, handling the stopping and starting of
+ * code coverage, adding filters and generating reports.
+ *
+ * @author James Lippitt
+ */
 class Analyzer
 {
     private $codeCoverageFactory;
     private $fileScanner;
     private $writerFactory;
 
+    /**
+     * @param callable $codeCoverageFactory
+     * @param FileScanner $fileScanner
+     * @param WriterFactory $writerFactory
+     */
     public function __construct(
         callable $codeCoverageFactory,
         FileScanner $fileScanner,
@@ -20,6 +31,12 @@ class Analyzer
         $this->writerFactory = $writerFactory;
     }
 
+    /**
+     * Wraps the running of specs with code coverage generation and reporting
+     *
+     * @param \stdClass $options Code coverage filter and report configuration
+     * @param callable $body Function called to run the specs
+     */
     public function begin(\stdClass $options, callable $body)
     {
         // Lazy-load code coverage. This means an error won't be raised if

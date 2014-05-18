@@ -2,8 +2,19 @@
 
 namespace Tusk\CodeCoverage;
 
+/**
+ * Constructs PHP_CodeCoverage report writers from configuration parameters
+ *
+ * @author James Lippitt
+ */
 class WriterFactory
 {
+    /**
+     * Construct a report writer from the given configuration
+     *
+     * @param \stdClass $options
+     * @return object
+     */
     public function create(\stdClass $options)
     {
         switch ($options->type) {
