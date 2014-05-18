@@ -19,7 +19,8 @@
         "symfony/console": "~2.4"
     },
     "require-dev": {
-        "mockery/mockery": "~0.9"
+        "mockery/mockery": "~0.9",
+        "phpunit/php-code-coverage": "~2.0"
     },
     "autoload": {
         "psr-4": {

@@ -44,7 +44,7 @@ class Container extends Pimple
             return new Command(
                 $c['Util\FileScanner'],
                 $c['SpecRunner'],
-                $c['CodeCoverage\CodeCoverage']
+                $c['CodeCoverage\Analyzer']
             );
         };
 
@@ -259,32 +259,14 @@ class Container extends Pimple
 
         $this['CodeCoverage\Analyzer'] = function ($c) {
             return new CodeCoverage\Analyzer(
-                $c['Util\GlobalFunctionProxy']
+                new \PHP_CodeCoverage(),
+                $c['Util\FileScanner'],
+                $c['CodeCoverage\WriterFactory']
             );
         };
 
-        $this['CodeCoverage\CodeCoverage'] = function ($c) {
-            return new CodeCoverage\CodeCoverage(
-                $c['CodeCoverage\Driver\Xdebug'],
-                $c['CodeCoverage\Analyzer'],
-                $c['CodeCoverage\ReportGenerator'],
-                $c['Util\FileScanner']
-            );
-        };
-
-        $this['CodeCoverage\ReportGenerator'] = function ($c) {
-            return new CodeCoverage\ReportGenerator(
-                $c['CodeCoverage\Output\Html'],
-                $c['Util\GlobalFunctionProxy']
-            );
-        };
-
-        $this['CodeCoverage\Driver\Xdebug'] = function ($c) {
-            return new CodeCoverage\Driver\Xdebug();
-        };
-
-        $this['CodeCoverage\Output\Html'] = function ($c) {
-            return new CodeCoverage\Output\Html();
+        $this['CodeCoverage\WriterFactory'] = function ($c) {
+            return new CodeCoverage\WriterFactory();
         };
 
         $this['Util\FileScanner'] = function ($c) {

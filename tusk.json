@@ -1,7 +1,10 @@
 {
     "paths": ["./spec"],
     "codeCoverage": {
-        "sourcePaths": ["./src"],
-        "outputDirectory": "./code_coverage"
+        "whitelist": ["./src"],
+        "reports": [{
+            "type": "html",
+            "location": "./code_coverage"
+        }]
     }
 }

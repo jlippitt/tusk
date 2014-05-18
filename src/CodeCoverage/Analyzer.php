@@ -2,76 +2,54 @@
 
 namespace Tusk\CodeCoverage;
 
-use Tusk\Util\GlobalFunctionProxy;
+use Tusk\Util\FileScanner;
 
 class Analyzer
 {
-    const EXECUTED = 1;
-    const NO_DATA = 0;
-    const NOT_EXECUTED = -1;
-    const NOT_EXECUTABLE = -2;
+    private $codeCoverage;
+    private $fileScanner;
+    private $writerFactory;
 
-    private $proxy;
-
-    public function __construct(GlobalFunctionProxy $proxy) {
-        $this->proxy = $proxy;
+    public function __construct(
+        \PHP_CodeCoverage $codeCoverage,
+        FileScanner $fileScanner,
+        WriterFactory $writerFactory
+    ) {
+        $this->codeCoverage = $codeCoverage;
+        $this->fileScanner = $fileScanner;
+        $this->writerFactory = $writerFactory;
     }
 
-    public function analyze(array $files, array $coverage)
+    public function begin(\stdClass $options, callable $body)
     {
-        $results = [
-            'stats' => [
-                'totalLines' => 0,
-                'executableLines' => 0,
-                'linesExecuted' => 0
-            ],
-            'files' => []
-        ];
+        $this->addFilesToFilter($options, 'whitelist');
+        $this->addFilesToFilter($options, 'blacklist');
 
-        foreach ($files as $file) {
-            if (!isset($coverage[$file])) {
-                continue;
+        $this->codeCoverage->start('Spec');
+
+        call_user_func($body);
+
+        $this->codeCoverage->stop();
+
+        if (isset($options->reports)) {
+            foreach ($options->reports as $report) {
+                $writer = $this->writerFactory->create($report);
+                $writer->process($this->codeCoverage, $report->location);
             }
+        }
+    }
 
-            $result = [
-                'stats' => [
-                    'totalLines' => 0,
-                    'executableLines' => 0,
-                    'linesExecuted' => 0
-                ],
-                'lines' => []
-            ];
-
-            foreach ($this->proxy->file($file) as $i => $line) {
-                $status = isset($coverage[$file][$i + 1]) ?
-                    $coverage[$file][$i + 1] : self::NO_DATA;
-
-                $result['lines'][] = [$line, $status];
-
-                ++$result['stats']['totalLines'];
-
-                if ($status === self::EXECUTED || $status === self::NOT_EXECUTED) {
-                    ++$result['stats']['executableLines'];
-
-                    if ($status === self::EXECUTED) {
-                        ++$result['stats']['linesExecuted'];
-                    }
-                }
-            }
-
-            $result['stats']['coverage'] = $result['stats']['linesExecuted'] /
-                (float)$result['stats']['executableLines'];
-
-            $results['files'][$file] = $result;
-
-            $results['stats']['totalLines'] += $result['stats']['totalLines'];
-            $results['stats']['executableLines'] += $result['stats']['executableLines'];
-            $results['stats']['linesExecuted'] += $result['stats']['linesExecuted'];
+    private function addFilesToFilter(\stdClass $options, $list)
+    {
+        if (!isset($options->$list)) {
+            return;
         }
 
-        $results['stats']['coverage'] = $results['stats']['linesExecuted'] /
-            (float)$results['stats']['executableLines'];
+        $filter = $this->codeCoverage->filter();
+        $method = 'addFileTo' . ucfirst($list);
 
-        return $results;
+        foreach ($this->fileScanner->find($options->$list, '.php') as $file) {
+            $filter->$method($file);
+        }
     }
 }
