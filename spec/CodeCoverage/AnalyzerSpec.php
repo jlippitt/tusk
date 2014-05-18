@@ -18,7 +18,9 @@ describe('Analyzer', function() {
         $this->writerFactory = m::mock('Tusk\CodeCoverage\WriterFactory');
 
         $this->analyzer = new Analyzer(
-            $this->codeCoverage,
+            function() {
+                return $this->codeCoverage;
+            },
             $this->fileScanner,
             $this->writerFactory
         );
