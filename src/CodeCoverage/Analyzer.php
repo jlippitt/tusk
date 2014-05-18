@@ -45,11 +45,11 @@ class Analyzer
             return;
         }
 
-        $filter = $this->codeCoverage->filter();
-        $method = 'addFileTo' . ucfirst($list);
-
-        foreach ($this->fileScanner->find($options->$list, '.php') as $file) {
-            $filter->$method($file);
-        }
+        $this->codeCoverage
+            ->filter()
+            ->{'addFilesTo' . ucfirst($list)}(
+                $this->fileScanner->find($options->$list, '.php')
+            )
+        ;
     }
 }
